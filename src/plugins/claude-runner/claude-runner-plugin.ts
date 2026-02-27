@@ -79,6 +79,7 @@ interface SDKMessage {
     cache_read_input_tokens?: number;
     cache_creation_input_tokens?: number;
   };
+  total_cost_usd?: number;
 }
 
 /**
@@ -369,6 +370,7 @@ export interface ClaudeRunnerResult {
     outputTokens: number;
     cacheReadInputTokens: number;
     cacheCreationInputTokens: number;
+    costUsd: number;
   };
 }
 
@@ -409,7 +411,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   #toolCallCount = 0;
 
   // Cumulative token usage across all queries for this pipeline run
-  #tokenUsage = { inputTokens: 0, outputTokens: 0, cacheReadInputTokens: 0, cacheCreationInputTokens: 0 };
+  #tokenUsage = { inputTokens: 0, outputTokens: 0, cacheReadInputTokens: 0, cacheCreationInputTokens: 0, costUsd: 0 };
 
   // External abort signal (e.g., from background permuter success)
   #externalAbortSignal?: AbortSignal;
@@ -707,6 +709,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
           this.#tokenUsage.cacheReadInputTokens += msg.usage.cache_read_input_tokens ?? 0;
           this.#tokenUsage.cacheCreationInputTokens += msg.usage.cache_creation_input_tokens ?? 0;
         }
+        this.#tokenUsage.costUsd += msg.total_cost_usd ?? 0;
 
         if (msg.subtype && msg.subtype !== 'success') {
           const errors = msg.errors ? msg.errors.join(', ') : 'Unknown error';
@@ -1079,6 +1082,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
       outputTokens: this.#tokenUsage.outputTokens - snapshot.outputTokens,
       cacheReadInputTokens: this.#tokenUsage.cacheReadInputTokens - snapshot.cacheReadInputTokens,
       cacheCreationInputTokens: this.#tokenUsage.cacheCreationInputTokens - snapshot.cacheCreationInputTokens,
+      costUsd: this.#tokenUsage.costUsd - snapshot.costUsd,
     };
   }
 
@@ -1093,7 +1097,13 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
     // before/after delta calculations must be zeroed here to avoid stale
     // cross-function data leaking into the snapshot.
     if (context.attemptNumber === 1) {
-      this.#tokenUsage = { inputTokens: 0, outputTokens: 0, cacheReadInputTokens: 0, cacheCreationInputTokens: 0 };
+      this.#tokenUsage = {
+        inputTokens: 0,
+        outputTokens: 0,
+        cacheReadInputTokens: 0,
+        cacheCreationInputTokens: 0,
+        costUsd: 0,
+      };
     }
 
     // Snapshot cumulative token usage before this attempt so we can compute the delta
@@ -1336,7 +1346,8 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
 
     // Add stats section with token usage
     if (result.data?.tokenUsage) {
-      const { inputTokens, outputTokens, cacheReadInputTokens, cacheCreationInputTokens } = result.data.tokenUsage;
+      const { inputTokens, outputTokens, cacheReadInputTokens, cacheCreationInputTokens, costUsd } =
+        result.data.tokenUsage;
       const totalInputTokens = inputTokens + cacheReadInputTokens + cacheCreationInputTokens;
       sections.push({
         type: 'message',
@@ -1344,6 +1355,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
         message: [
           `Input tokens: ${totalInputTokens} (${inputTokens} new, ${cacheReadInputTokens} cache read, ${cacheCreationInputTokens} cache write)`,
           `Output tokens: ${outputTokens}`,
+          `Cost: $${costUsd.toFixed(4)}`,
         ].join('\n'),
       });
     }

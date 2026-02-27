@@ -137,6 +137,7 @@ function createMockQueryFactory(options: MockQueryFactoryOptions | string[]): Qu
           cache_read_input_tokens: 8000,
           cache_creation_input_tokens: 200,
         },
+        total_cost_usd: 0.003,
       } as unknown as SDKResultSuccess;
     }
 
@@ -1500,6 +1501,7 @@ mov eax, 0
       expect(statsSection.message).toContain('8000 cache read');
       expect(statsSection.message).toContain('200 cache write');
       expect(statsSection.message).toContain('Output tokens: 50');
+      expect(statsSection.message).toContain('Cost: $0.0030');
     });
   });
 
@@ -2023,6 +2025,7 @@ mov eax, 0
         outputTokens: 50,
         cacheReadInputTokens: 8000,
         cacheCreationInputTokens: 200,
+        costUsd: 0.003,
       });
     });
 
@@ -2047,6 +2050,7 @@ mov eax, 0
         outputTokens: 50,
         cacheReadInputTokens: 8000,
         cacheCreationInputTokens: 200,
+        costUsd: 0.003,
       });
 
       // Prepare retry
@@ -2086,6 +2090,7 @@ mov eax, 0
         outputTokens: 50,
         cacheReadInputTokens: 8000,
         cacheCreationInputTokens: 200,
+        costUsd: 0.003,
       });
     });
 
@@ -2113,6 +2118,7 @@ mov eax, 0
         outputTokens: 50,
         cacheReadInputTokens: 8000,
         cacheCreationInputTokens: 200,
+        costUsd: 0.003,
       });
 
       // Function B, attempt 1 (new function resets state)
@@ -2127,6 +2133,7 @@ mov eax, 0
         outputTokens: 50,
         cacheReadInputTokens: 8000,
         cacheCreationInputTokens: 200,
+        costUsd: 0.003,
       });
     });
 
@@ -2164,6 +2171,7 @@ mov eax, 0
                     cache_read_input_tokens: 10000,
                     cache_creation_input_tokens: 1000,
                   },
+                  total_cost_usd: 0.015,
                 } as unknown as SDKMessage;
               })(),
             close: vi.fn(),
@@ -2210,6 +2218,7 @@ mov eax, 0
         outputTokens: 200,
         cacheReadInputTokens: 10000,
         cacheCreationInputTokens: 1000,
+        costUsd: 0.015,
       });
 
       // Prepare retry
@@ -2246,6 +2255,7 @@ mov eax, 0
         outputTokens: 0,
         cacheReadInputTokens: 0,
         cacheCreationInputTokens: 0,
+        costUsd: 0,
       });
     });
 
@@ -2282,6 +2292,7 @@ mov eax, 0
                     cache_read_input_tokens: 10000,
                     cache_creation_input_tokens: 1000,
                   },
+                  total_cost_usd: 0.015,
                 } as unknown as SDKMessage;
               })(),
             close: vi.fn(),
@@ -2304,6 +2315,7 @@ mov eax, 0
                   cache_read_input_tokens: 5000,
                   cache_creation_input_tokens: 0,
                 },
+                total_cost_usd: 0.001,
               } as unknown as SDKMessage;
             })(),
           close: vi.fn(),
@@ -2354,6 +2366,7 @@ mov eax, 0
         outputTokens: 0,
         cacheReadInputTokens: 5000,
         cacheCreationInputTokens: 0,
+        costUsd: expect.closeTo(0.001, 10),
       });
     });
   });
@@ -2378,6 +2391,7 @@ mov eax, 0
         cache_read_input_tokens: number;
         cache_creation_input_tokens: number;
       };
+      phase2CostUsd?: number;
       /** If true, phase 1 does NOT emit a system init message (no sessionId) */
       noSessionId?: boolean;
     }) {
@@ -2447,6 +2461,7 @@ mov eax, 0
                 session_id: TEST_SESSION_ID,
                 is_error: false,
                 usage,
+                total_cost_usd: options.phase2CostUsd ?? 0.002,
               } as unknown as SDKMessage;
             })(),
           close: vi.fn(),
@@ -2743,6 +2758,7 @@ mov eax, 0
         outputTokens: 100,
         cacheReadInputTokens: 6000,
         cacheCreationInputTokens: 300,
+        costUsd: 0.002,
       });
     });
 
