@@ -901,7 +901,12 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   }
 
   /**
-   * Reset state for new pipeline run
+   * Reset conversation state for a new initial query.
+   *
+   * Called from #executeQuery() AFTER execute().
+   * Only reset state related to the SDK session and conversation.
+   * Any counters used in before/after delta calculations
+   * (e.g. #tokenUsage) must be reset in execute() before the snapshot.
    */
   #resetState(): void {
     if (this.#currentQuery) {
@@ -914,7 +919,6 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
     this.#initialPromptHash = null;
     this.#currentCacheNode = null;
     this.#lastStallAttemptIndex = -1;
-    this.#tokenUsage = { inputTokens: 0, outputTokens: 0, cacheReadInputTokens: 0, cacheCreationInputTokens: 0 };
   }
 
   /**
@@ -1083,6 +1087,14 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
     context: PipelineContext;
   }> {
     const startTime = Date.now();
+
+    // Reset per-function counters before snapshotting. #resetState() runs
+    // later (inside #executeQuery()), so any counter that participates in
+    // before/after delta calculations must be zeroed here to avoid stale
+    // cross-function data leaking into the snapshot.
+    if (context.attemptNumber === 1) {
+      this.#tokenUsage = { inputTokens: 0, outputTokens: 0, cacheReadInputTokens: 0, cacheCreationInputTokens: 0 };
+    }
 
     // Snapshot cumulative token usage before this attempt so we can compute the delta
     const tokenUsageBeforeAttempt = { ...this.#tokenUsage };

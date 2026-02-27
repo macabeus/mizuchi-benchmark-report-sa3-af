@@ -2089,6 +2089,47 @@ mov eax, 0
       });
     });
 
+    it('resets token usage between functions (no negative values)', async () => {
+      const responseA = '```c\nint funcA(void) { return 1; }\n```';
+      const responseB = '```c\nint funcB(void) { return 2; }\n```';
+      const mockFactory = createMockQueryFactory({
+        responses: [responseA, responseB],
+        requireResumeForFollowUp: false,
+      });
+      const plugin = new ClaudeRunnerPlugin({
+        config: defaultPluginConfig,
+        pipelineConfig: defaultTestPipelineConfig,
+        cCompiler: testCCompiler,
+        objdiff: testObjdiff,
+        queryFactory: mockFactory,
+      });
+
+      // Function A, attempt 1
+      const contextA = createTestContext({ functionName: 'funcA', promptContent: 'Decompile funcA' });
+      const { result: resultA } = await plugin.execute(contextA);
+      expect(resultA.status).toBe('success');
+      expect(resultA.data?.tokenUsage).toEqual({
+        inputTokens: 100,
+        outputTokens: 50,
+        cacheReadInputTokens: 8000,
+        cacheCreationInputTokens: 200,
+      });
+
+      // Function B, attempt 1 (new function resets state)
+      // Use different promptContent to avoid cache hit from function A
+      const contextB = createTestContext({ functionName: 'funcB', attemptNumber: 1, promptContent: 'Decompile funcB' });
+      const { result: resultB } = await plugin.execute(contextB);
+      expect(resultB.status).toBe('success');
+
+      // Token usage for function B must be non-negative and reflect only this attempt
+      expect(resultB.data?.tokenUsage).toEqual({
+        inputTokens: 100,
+        outputTokens: 50,
+        cacheReadInputTokens: 8000,
+        cacheCreationInputTokens: 200,
+      });
+    });
+
     it('reports zero token usage when attempt times out with no API response', async () => {
       const cCode = 'int foo(void) { return 1; }';
       const successResponse = `\`\`\`c\n${cCode}\n\`\`\``;
