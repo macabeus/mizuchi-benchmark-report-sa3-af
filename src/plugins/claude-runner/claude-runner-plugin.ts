@@ -27,6 +27,8 @@ import type {
   PluginResultMap,
 } from '~/shared/types.js';
 
+import { QueryAbortedError, QueryTimeoutError } from './errors.js';
+
 /**
  * Query interface from the SDK
  */
@@ -87,7 +89,10 @@ type McpServer = ReturnType<typeof createSdkMcpServer>;
 /**
  * Query factory type for dependency injection (enables testing)
  */
-export type QueryFactory = (prompt: string, options: { model?: string; resume?: string }) => Query;
+export type QueryFactory = (
+  prompt: string,
+  options: { model?: string; resume?: string; effort?: 'low' | 'medium' | 'high' | 'max' },
+) => Query;
 
 /**
  * Conversation node in the cache tree
@@ -111,27 +116,41 @@ interface ConversationCache {
 /**
  * Configuration schema for ClaudeRunnerPlugin
  */
-export const claudeRunnerConfigSchema = z.object({
-  timeoutMs: z.number().positive().default(600_000).describe('Timeout in milliseconds for Claude requests'),
-  cachePath: z.string().optional().describe('Path to JSON cache file for response caching'),
-  model: z.string().optional().describe('Claude model to use'),
-  systemPrompt: z
-    .string()
-    .describe('System prompt template for Claude. Template variables: {{contextFilePath}}, {{promptContent}}'),
-  kickoffMessage: z.string().describe('First user message sent to Claude to start the conversation'),
-  stallThreshold: z
-    .number()
-    .int()
-    .positive()
-    .default(3)
-    .describe('Number of consecutive attempts without improvement before triggering stall recovery guidance'),
-  toolCallLimit: z
-    .number()
-    .int()
-    .positive()
-    .default(7)
-    .describe('Maximum number of compile_and_view_assembly tool calls allowed per retry iteration'),
-});
+export const claudeRunnerConfigSchema = z
+  .object({
+    timeoutMs: z.number().positive().default(600_000).describe('Timeout in milliseconds for Claude requests'),
+    cachePath: z.string().optional().describe('Path to JSON cache file for response caching'),
+    model: z.string().optional().describe('Claude model to use'),
+    systemPrompt: z
+      .string()
+      .describe('System prompt template for Claude. Template variables: {{contextFilePath}}, {{promptContent}}'),
+    kickoffMessage: z.string().describe('First user message sent to Claude to start the conversation'),
+    stallThreshold: z
+      .number()
+      .int()
+      .positive()
+      .default(3)
+      .describe('Number of consecutive attempts without improvement before triggering stall recovery guidance'),
+    toolCallLimit: z
+      .number()
+      .int()
+      .positive()
+      .default(7)
+      .describe('Maximum number of compile_and_view_assembly tool calls allowed per retry iteration'),
+    softTimeout: z
+      .object({
+        softTimeoutMs: z.number().positive(),
+        prompt: z.string(),
+        model: z.string().optional(),
+        effort: z.enum(['low', 'medium', 'high', 'max']).optional(),
+      })
+      .optional()
+      .describe('Soft timeout: gives Claude a chance to submit before hard timeout'),
+  })
+  .refine((config) => !config.softTimeout || config.softTimeout.softTimeoutMs < config.timeoutMs, {
+    message: 'softTimeout.softTimeoutMs must be less than timeoutMs',
+    path: ['softTimeout', 'softTimeoutMs'],
+  });
 
 export type ClaudeRunnerConfig = z.infer<typeof claudeRunnerConfigSchema>;
 
@@ -344,6 +363,7 @@ export interface ClaudeRunnerResult {
   codeLength?: number;
   fromCache: boolean;
   stallDetected: boolean;
+  softTimeoutTriggered: boolean;
   tokenUsage?: {
     inputTokens: number;
     outputTokens: number;
@@ -369,6 +389,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   #config: ClaudeRunnerConfig;
   #feedbackPrompt?: string;
   #stallDetected = false;
+  #softTimeoutTriggered = false;
   #lastStallAttemptIndex = -1;
   #queryFactory: QueryFactory;
   #cache: ConversationCache | null = null;
@@ -432,6 +453,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
           options: {
             systemPrompt: this.systemPrompt,
             model: options.model || DEFAULT_MODEL,
+            ...(options.effort ? { effort: options.effort } : {}),
             allowedTools: ['Read', 'Glob', 'Grep', 'mcp__mizuchi__compile_and_view_assembly'],
             permissionMode: 'dontAsk',
             cwd: pipelineConfig.projectPath,
@@ -709,7 +731,12 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
    * in all cases. The caller provides a `work` callback that does the actual
    * response processing.
    */
-  async #runQueryWithAbort<T>(work: () => Promise<T>): Promise<T> {
+  async #runQueryWithAbort<T>(
+    work: () => Promise<T>,
+    options?: { timeoutMs?: number; timeoutMode?: 'soft' | 'hard' },
+  ): Promise<T> {
+    const effectiveTimeout = options?.timeoutMs ?? this.#config.timeoutMs;
+    const timeoutMode = options?.timeoutMode ?? 'hard';
     const abortController = new AbortController();
     const abortAndClose = () => {
       abortController.abort();
@@ -719,17 +746,27 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
       }
     };
 
-    const timeoutId = setTimeout(abortAndClose, this.#config.timeoutMs);
+    const timeoutId = setTimeout(abortAndClose, effectiveTimeout);
     this.#externalAbortSignal?.addEventListener('abort', abortAndClose);
 
     try {
-      return await work();
+      const result = await work();
+
+      // The timeout may have fired and closed the query mid-stream,
+      // but the SDK async iterator exits gracefully ({done: true}) rather
+      // than throwing.  Detect this so #runWithSoftTimeout can resume
+      // the conversation with the "submit now" prompt.
+      if (abortController.signal.aborted) {
+        throw new QueryTimeoutError({ timeoutMs: effectiveTimeout, mode: timeoutMode });
+      }
+
+      return result;
     } catch (error) {
       if (this.#externalAbortSignal?.aborted) {
-        throw new Error('Aborted: background plugin found a perfect match');
+        throw new QueryAbortedError();
       }
       if (abortController.signal.aborted) {
-        throw new Error(`Claude timed out after ${this.#config.timeoutMs}ms`);
+        throw new QueryTimeoutError({ timeoutMs: effectiveTimeout, mode: timeoutMode });
       }
       throw error;
     } finally {
@@ -745,7 +782,10 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   /**
    * Run a query for initial attempt
    */
-  async #runInitialQuery(): Promise<{ response: string; fromCache: boolean }> {
+  async #runInitialQuery(timeoutOptions?: {
+    timeoutMs: number;
+    timeoutMode: 'soft' | 'hard';
+  }): Promise<{ response: string; fromCache: boolean }> {
     // Cache key is based on the system prompt (which includes the task content)
     this.#initialPromptHash = hashPrompt(this.systemPrompt);
 
@@ -792,13 +832,16 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
       this.#addConversationToCache(promptHash, this.#currentCacheNode);
 
       return { response: text, fromCache: false };
-    });
+    }, timeoutOptions);
   }
 
   /**
    * Continue conversation with follow-up query
    */
-  async #runFollowUpQuery(followUpPrompt: string): Promise<{ response: string; fromCache: boolean }> {
+  async #runFollowUpQuery(
+    followUpPrompt: string,
+    timeoutOptions?: { timeoutMs: number; timeoutMode: 'soft' | 'hard' },
+  ): Promise<{ response: string; fromCache: boolean }> {
     const followUpHash = hashPrompt(followUpPrompt);
 
     // Check cache for this follow-up
@@ -854,7 +897,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
       this.#cacheModified = true;
 
       return { response: text, fromCache: false };
-    });
+    }, timeoutOptions);
   }
 
   /**
@@ -875,12 +918,76 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   }
 
   /**
+   * Wrap a query with soft-timeout logic.
+   *
+   * If `softTimeout` is configured, runs the query with a shorter deadline. When
+   * that fires AND a session is active, resumes the conversation with a "submit now"
+   * prompt under the remaining time budget. If no session exists (API never responded),
+   * throws the normal timeout error with the full `timeoutMs`.
+   */
+  async #runWithSoftTimeout(
+    runQuery: (timeoutOptions?: { timeoutMs: number; timeoutMode: 'soft' | 'hard' }) => Promise<{
+      response: string;
+      fromCache: boolean;
+    }>,
+  ): Promise<{ response: string; fromCache: boolean; softTimeoutTriggered: boolean }> {
+    const softConfig = this.#config.softTimeout;
+    if (!softConfig) {
+      const result = await runQuery();
+      return { ...result, softTimeoutTriggered: false };
+    }
+
+    try {
+      const result = await runQuery({ timeoutMs: softConfig.softTimeoutMs, timeoutMode: 'soft' });
+      return { ...result, softTimeoutTriggered: false };
+    } catch (error) {
+      // Only intercept soft timeout errors
+      if (!(error instanceof QueryTimeoutError) || error.mode !== 'soft') {
+        throw error;
+      }
+
+      // If no session was established (API never responded), fail fast with actual elapsed time
+      if (!this.#sessionId) {
+        throw new QueryTimeoutError({ timeoutMs: softConfig.softTimeoutMs, mode: 'hard' });
+      }
+
+      // Resume the session with the soft timeout prompt
+      const model = softConfig.model ?? this.#config.model ?? DEFAULT_MODEL;
+      const remainingMs = this.#config.timeoutMs - softConfig.softTimeoutMs;
+
+      this.#currentQuery = this.#queryFactory(softConfig.prompt, {
+        model,
+        resume: this.#sessionId,
+        effort: softConfig.effort,
+      });
+      const activeQuery = this.#currentQuery;
+
+      const { text, contentBlocks } = await this.#runQueryWithAbort(
+        async () => {
+          return this.#collectResponse(activeQuery);
+        },
+        { timeoutMs: remainingMs, timeoutMode: 'hard' },
+      );
+
+      // Append soft timeout prompt + response to conversation history
+      const hasToolCalls = contentBlocks.some((b) => b.type === 'tool_use' || b.type === 'tool_result');
+      this.#conversationHistory.push(
+        { role: 'user', content: softConfig.prompt },
+        { role: 'assistant', content: hasToolCalls ? contentBlocks : text },
+      );
+
+      this.#softTimeoutTriggered = true;
+      return { response: text, fromCache: false, softTimeoutTriggered: true };
+    }
+  }
+
+  /**
    * Run the appropriate query (initial or follow-up) based on current state.
    */
   async #executeQuery(
     context: PipelineContext,
     promptContent: string,
-  ): Promise<{ response: string; fromCache: boolean; promptUsed: string }> {
+  ): Promise<{ response: string; fromCache: boolean; promptUsed: string; softTimeoutTriggered: boolean }> {
     // Guard against stale retry state from a previous function.
     // When a background task (e.g., decomp-permuter) matches Function N, prepareRetry()
     // may have already set #feedbackPrompt before the retry loop exits. Without this
@@ -889,13 +996,22 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
     if (context.attemptNumber === 1) {
       this.#feedbackPrompt = undefined;
       this.#stallDetected = false;
+      this.#softTimeoutTriggered = false;
     }
 
     if (this.#feedbackPrompt) {
       const promptUsed = this.#feedbackPrompt;
-      const result = await this.#runFollowUpQuery(this.#feedbackPrompt);
+      const feedbackPrompt = this.#feedbackPrompt;
       this.#feedbackPrompt = undefined;
-      return { response: result.response, fromCache: result.fromCache, promptUsed };
+      const result = await this.#runWithSoftTimeout((timeoutOptions) =>
+        this.#runFollowUpQuery(feedbackPrompt, timeoutOptions),
+      );
+      return {
+        response: result.response,
+        fromCache: result.fromCache,
+        promptUsed,
+        softTimeoutTriggered: result.softTimeoutTriggered,
+      };
     }
 
     // Initial attempt: run new query
@@ -906,8 +1022,13 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
       .replaceAll('{{contextFilePath}}', context.contextFilePath ?? '')
       .replaceAll('{{promptContent}}', promptContent);
 
-    const result = await this.#runInitialQuery();
-    return { response: result.response, fromCache: result.fromCache, promptUsed: this.#config.kickoffMessage };
+    const result = await this.#runWithSoftTimeout((timeoutOptions) => this.#runInitialQuery(timeoutOptions));
+    return {
+      response: result.response,
+      fromCache: result.fromCache,
+      promptUsed: this.#config.kickoffMessage,
+      softTimeoutTriggered: result.softTimeoutTriggered,
+    };
   }
 
   /**
@@ -918,7 +1039,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   async #executeQueryWithUsageLimitHandling(
     context: PipelineContext,
     promptContent: string,
-  ): Promise<{ response: string; fromCache: boolean; promptUsed: string }> {
+  ): Promise<{ response: string; fromCache: boolean; promptUsed: string; softTimeoutTriggered: boolean }> {
     try {
       return await this.#executeQuery(context, promptContent);
     } catch (error) {
@@ -995,7 +1116,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
         promptContent += buildM2cContextSection(context.m2cContext);
       }
 
-      const { response, fromCache, promptUsed } = await this.#executeQueryWithUsageLimitHandling(
+      const { response, fromCache, promptUsed, softTimeoutTriggered } = await this.#executeQueryWithUsageLimitHandling(
         context,
         promptContent,
       );
@@ -1018,6 +1139,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
               fromCache,
               generatedCode: '',
               stallDetected: this.#stallDetected,
+              softTimeoutTriggered,
               tokenUsage: this.#getAttemptTokenUsage(tokenUsageBeforeAttempt),
             },
           },
@@ -1042,6 +1164,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
               promptSent: promptUsed,
               fromCache,
               stallDetected: this.#stallDetected,
+              softTimeoutTriggered,
               tokenUsage: this.#getAttemptTokenUsage(tokenUsageBeforeAttempt),
             },
           },
@@ -1065,6 +1188,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
             codeLength: code.length,
             fromCache,
             stallDetected: this.#stallDetected,
+            softTimeoutTriggered,
             tokenUsage: this.#getAttemptTokenUsage(tokenUsageBeforeAttempt),
           },
         },
@@ -1087,6 +1211,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
             fromCache: false,
             generatedCode: '',
             stallDetected: this.#stallDetected,
+            softTimeoutTriggered: this.#softTimeoutTriggered,
             tokenUsage: this.#getAttemptTokenUsage(tokenUsageBeforeAttempt),
           },
         },
