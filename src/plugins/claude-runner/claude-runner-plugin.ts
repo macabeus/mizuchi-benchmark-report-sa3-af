@@ -493,7 +493,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   #statusCallback?: (status: PluginStatusData) => void;
   #executeStartTime = 0;
   #statusTimerId?: ReturnType<typeof setInterval>;
-  #lastStatusText = '';
+
   #lastStatusBlocks: ContentBlock[] = [];
 
   // MCP tool dependencies
@@ -575,43 +575,33 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
     this.#statusCallback = callback;
   }
 
-  #emitStatus(currentText?: string, blocks?: ContentBlock[]): void {
+  #emitStatus(blocks?: ContentBlock[]): void {
     // Update stored state when new data is provided
-    if (currentText !== undefined) {
-      this.#lastStatusText = currentText;
-    }
     if (blocks !== undefined) {
       this.#lastStatusBlocks = blocks;
     }
 
-    const text = this.#lastStatusText;
     const blks = this.#lastStatusBlocks;
-    const logLines: string[] = [];
 
-    // Collect last 3 tool calls to show activity during tool-heavy phases
-    const recentToolsUses = blks.filter((b) => b.type === 'tool_use').slice(-3);
-    for (const toolsUse of recentToolsUses) {
-      const hasResult = blks.some((b) => b.type === 'tool_result' && b.tool_use_id === toolsUse.id);
-      const bullet = hasResult ? '✓' : '▸';
-
-      const toolLabel = formatToolLabel(toolsUse.name, toolsUse.input);
-
-      logLines.push(`${bullet} ${toolLabel}`);
-    }
-
-    // Show last lines of Claude's streaming text (fill remaining slots, prefer text over tools)
-    if (text) {
-      const textLines = text.split('\n').filter((l) => l.trim());
-      const recent = textLines.slice(-3);
-
-      // Replace tool lines with text lines when text is available
-      const toolLinesToKeep = Math.max(0, 3 - recent.length);
-      logLines.splice(0, logLines.length - toolLinesToKeep);
-
-      for (const line of recent) {
-        logLines.push(line.length > 80 ? line.slice(0, 77) + '...' : line);
+    // Build chronological display lines from content blocks, then show the tail.
+    // This interleaves tool calls and text so the display always reflects the latest activity.
+    const allLines: string[] = [];
+    for (const block of blks) {
+      if (block.type === 'tool_use') {
+        const hasResult = blks.some((b) => b.type === 'tool_result' && b.tool_use_id === block.id);
+        const bullet = hasResult ? '✓' : '▸';
+        const toolLabel = formatToolLabel(block.name, block.input);
+        allLines.push(`${bullet} ${toolLabel}`);
+      } else if (block.type === 'text') {
+        const textLines = block.text.split('\n').filter((l) => l.trim());
+        for (const line of textLines) {
+          allLines.push(line.length > 80 ? line.slice(0, 77) + '...' : line);
+        }
       }
+      // tool_result blocks are reflected by the ✓ on their corresponding tool_use
     }
+
+    const logLines = allLines.slice(-3);
 
     const stats: PluginStatusData['stats'] = [];
 
@@ -640,7 +630,6 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
 
   #startStatusTimer(): void {
     this.#stopStatusTimer();
-    this.#lastStatusText = '';
     this.#lastStatusBlocks = [];
     this.#emitStatus();
     this.#statusTimerId = setInterval(() => {
@@ -884,7 +873,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
 
         // Emit live status update after processing each message
         if (this.#statusCallback) {
-          this.#emitStatus(responseText, contentBlocks);
+          this.#emitStatus(contentBlocks);
         }
 
         if (msg.type === 'result') {

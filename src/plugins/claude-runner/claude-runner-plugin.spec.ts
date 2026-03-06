@@ -3594,6 +3594,190 @@ mov eax, 0
       expect(textUpdate).toBeDefined();
     });
 
+    it('shows latest tool calls when they follow text (no stale text)', async () => {
+      const cCode = `\`\`\`c\nvoid sub_8068748(void) {}\n\`\`\``;
+
+      // Simulate: text → tool_use → tool_result → tool_use → tool_result → final text
+      // After the first two tool calls, the display should show tool activity, not stale text.
+      const factory = vi.fn((_prompt: string, _options: any) => {
+        async function* generateMessages(): AsyncGenerator<SDKMessage> {
+          yield { type: 'system', subtype: 'init', session_id: TEST_SESSION_ID } as SDKMessage;
+
+          // Turn 1: assistant writes some text
+          yield {
+            type: 'assistant',
+            session_id: TEST_SESSION_ID,
+            message: {
+              id: 'msg-1',
+              content: [
+                {
+                  type: 'text',
+                  text: 'Let me analyze the assembly.\nThis function has a loop.\nI will try compiling.',
+                },
+              ],
+            },
+          } as SDKMessage;
+
+          // Turn 2: assistant calls a tool (no new text)
+          yield {
+            type: 'assistant',
+            session_id: TEST_SESSION_ID,
+            message: {
+              id: 'msg-2',
+              content: [{ type: 'tool_use', id: 'tool-1', name: 'Read', input: { file_path: '/src/main.c' } }],
+            },
+          } as SDKMessage;
+
+          // Turn 3: tool result
+          yield {
+            type: 'user',
+            session_id: TEST_SESSION_ID,
+            message: { content: [{ type: 'tool_result', tool_use_id: 'tool-1', content: 'file contents...' }] },
+          } as SDKMessage;
+
+          // Turn 4: assistant calls another tool
+          yield {
+            type: 'assistant',
+            session_id: TEST_SESSION_ID,
+            message: {
+              id: 'msg-3',
+              content: [{ type: 'tool_use', id: 'tool-2', name: 'Grep', input: { pattern: 'my_func' } }],
+            },
+          } as SDKMessage;
+
+          // Turn 5: tool result
+          yield {
+            type: 'user',
+            session_id: TEST_SESSION_ID,
+            message: { content: [{ type: 'tool_result', tool_use_id: 'tool-2', content: 'grep results...' }] },
+          } as SDKMessage;
+
+          // Turn 6: final text with code
+          yield {
+            type: 'assistant',
+            session_id: TEST_SESSION_ID,
+            message: { id: 'msg-4', content: [{ type: 'text', text: `Here is my implementation:\n${cCode}` }] },
+          } as SDKMessage;
+
+          yield {
+            type: 'result',
+            subtype: 'success',
+            session_id: TEST_SESSION_ID,
+            is_error: false,
+            duration_ms: 5000,
+            duration_api_ms: 4500,
+            num_turns: 4,
+            modelUsage: {
+              'claude-sonnet-4-20250514': {
+                inputTokens: 100,
+                outputTokens: 50,
+                cacheReadInputTokens: 0,
+                cacheCreationInputTokens: 0,
+                costUSD: 0.003,
+              },
+            },
+          } as unknown as SDKResultSuccess;
+        }
+        return { [Symbol.asyncIterator]: () => generateMessages(), close: vi.fn() } as any;
+      });
+
+      const plugin = new ClaudeRunnerPlugin({
+        config: defaultPluginConfig,
+        pipelineConfig: defaultTestPipelineConfig,
+        cCompiler: testCCompiler,
+        objdiff: testObjdiff,
+        queryFactory: factory,
+      });
+
+      const statusUpdates: PluginStatusData[] = [];
+      plugin.setStatusCallback((status) => {
+        statusUpdates.push(structuredClone(status));
+      });
+
+      const context = createTestContext();
+      await plugin.execute(context);
+
+      // After Turn 3 (tool_result for Read): the display should include the Read tool call,
+      // NOT just the stale text from Turn 1
+      const afterFirstTool = statusUpdates.find(
+        (u) => u.logLines?.some((l) => l.includes('✓ Read')) && !u.logLines?.some((l) => l.includes('Grep')),
+      );
+      expect(afterFirstTool).toBeDefined();
+      // The tool call line should be visible (interleaved with text)
+      expect(afterFirstTool!.logLines!.some((l) => l.includes('✓ Read'))).toBe(true);
+
+      // After Turn 5 (tool_result for Grep): should show both tools (tail of conversation)
+      const afterSecondTool = statusUpdates.find((u) => u.logLines?.some((l) => l.includes('✓ Grep')));
+      expect(afterSecondTool).toBeDefined();
+      expect(afterSecondTool!.logLines!.some((l) => l.includes('✓ Grep'))).toBe(true);
+
+      // Final update should show the latest text (the code), not old text
+      const lastUpdate = statusUpdates[statusUpdates.length - 1]!;
+      expect(lastUpdate.logLines!.some((l) => l.includes('sub_8068748'))).toBe(true);
+    });
+
+    it('shows tail of long single message, not the beginning', async () => {
+      const longText = Array.from({ length: 20 }, (_, i) => `Line ${i + 1} of analysis`).join('\n');
+
+      const factory = vi.fn((_prompt: string, _options: any) => {
+        async function* generateMessages(): AsyncGenerator<SDKMessage> {
+          yield { type: 'system', subtype: 'init', session_id: TEST_SESSION_ID } as SDKMessage;
+          yield {
+            type: 'assistant',
+            session_id: TEST_SESSION_ID,
+            message: {
+              id: 'msg-1',
+              content: [
+                { type: 'text', text: longText },
+                { type: 'text', text: '\n```c\nvoid sub_8068748(void) {}\n```' },
+              ],
+            },
+          } as SDKMessage;
+          yield {
+            type: 'result',
+            subtype: 'success',
+            session_id: TEST_SESSION_ID,
+            is_error: false,
+            duration_ms: 1000,
+            duration_api_ms: 900,
+            num_turns: 1,
+            modelUsage: {
+              'claude-sonnet-4-20250514': {
+                inputTokens: 100,
+                outputTokens: 50,
+                cacheReadInputTokens: 0,
+                cacheCreationInputTokens: 0,
+                costUSD: 0.003,
+              },
+            },
+          } as unknown as SDKResultSuccess;
+        }
+        return { [Symbol.asyncIterator]: () => generateMessages(), close: vi.fn() } as any;
+      });
+
+      const plugin = new ClaudeRunnerPlugin({
+        config: defaultPluginConfig,
+        pipelineConfig: defaultTestPipelineConfig,
+        cCompiler: testCCompiler,
+        objdiff: testObjdiff,
+        queryFactory: factory,
+      });
+
+      const statusUpdates: PluginStatusData[] = [];
+      plugin.setStatusCallback((status) => {
+        statusUpdates.push(structuredClone(status));
+      });
+
+      const context = createTestContext();
+      await plugin.execute(context);
+
+      // Should show the TAIL of the content (last 3 lines), not "Line 1 of analysis"
+      const lastUpdate = statusUpdates[statusUpdates.length - 1]!;
+      expect(lastUpdate.logLines!.some((l) => l.includes('Line 1'))).toBe(false);
+      // Should show lines from the end of the text (the code block)
+      expect(lastUpdate.logLines!.some((l) => l.includes('sub_8068748'))).toBe(true);
+    });
+
     it('emits initial status immediately with stats bar', async () => {
       const mockFactory = createMockQueryFactory(['```c\nvoid sub_8068748(void) {}\n```']);
 
