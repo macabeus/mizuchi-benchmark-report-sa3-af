@@ -191,6 +191,11 @@ export interface RunReport {
   config: ReportConfig;
   results: ReportPromptResult[];
   summary: ReportSummary;
+  /** Present and true when this report is a partial snapshot of an in-progress run */
+  partial?: {
+    completedPrompts: number;
+    totalPrompts: number;
+  };
 }
 
 /**

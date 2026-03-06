@@ -51,7 +51,11 @@ function transformAttempt(attempt: AttemptResult) {
 /**
  * Transform PipelineResults to RunReport
  */
-export function transformToReport(results: PipelineResults, pluginConfigs: ReportPluginConfigs): RunReport {
+export function transformToReport(
+  results: PipelineResults,
+  pluginConfigs: ReportPluginConfigs,
+  partial?: { completedPrompts: number; totalPrompts: number },
+): RunReport {
   const reportResults: ReportPromptResult[] = results.results.map((promptResult) => {
     const attempts = promptResult.attempts.map(transformAttempt);
     const setupPhase = transformAttempt(promptResult.setupPhase);
@@ -89,5 +93,6 @@ export function transformToReport(results: PipelineResults, pluginConfigs: Repor
     },
     results: reportResults,
     summary: results.summary,
+    ...(partial ? { partial } : {}),
   };
 }

@@ -1173,6 +1173,116 @@ describe('PluginManager', () => {
       expect(results.results[0].success).toBe(false);
       expect(results.results[0].setupPhase.pluginResults[0].error).toContain('Specific crash reason');
     });
+
+    it('calls onPromptComplete after each prompt with accumulated results', async () => {
+      const manager = new PluginManager(defaultTestPipelineConfig);
+      manager.register(createSuccessPlugin('plugin1', 'Plugin 1'));
+
+      const prompts = [
+        { path: 'p1.md', content: 'c1', functionName: 'func1', targetObjectPath: '/t1.o', asm: '.text\n' },
+        { path: 'p2.md', content: 'c2', functionName: 'func2', targetObjectPath: '/t2.o', asm: '.text\n' },
+        { path: 'p3.md', content: 'c3', functionName: 'func3', targetObjectPath: '/t3.o', asm: '.text\n' },
+      ];
+
+      const calls: { resultCount: number; totalPrompts: number }[] = [];
+      const onPromptComplete = vi.fn(async (partialResults, totalPrompts) => {
+        calls.push({ resultCount: partialResults.length, totalPrompts });
+      });
+
+      await manager.runPipelines(prompts, onPromptComplete);
+
+      expect(onPromptComplete).toHaveBeenCalledTimes(3);
+      expect(calls).toEqual([
+        { resultCount: 1, totalPrompts: 3 },
+        { resultCount: 2, totalPrompts: 3 },
+        { resultCount: 3, totalPrompts: 3 },
+      ]);
+    });
+
+    it('calls onPromptComplete even when a prompt fails with an unexpected error', async () => {
+      const manager = new PluginManager(defaultTestPipelineConfig);
+
+      let callCount = 0;
+      const plugin = createMockPlugin({
+        id: 'test',
+        name: 'Test',
+        executeFn: async (ctx) => {
+          callCount++;
+          if (callCount === 2) {
+            throw new Error('Unexpected crash');
+          }
+          return {
+            result: { pluginId: 'test', pluginName: 'Test', status: 'success', durationMs: 10 },
+            context: ctx,
+          };
+        },
+      });
+      manager.register(plugin);
+
+      const prompts = [
+        { path: 'p1.md', content: 'c1', functionName: 'func1', targetObjectPath: '/t1.o', asm: '.text\n' },
+        { path: 'p2.md', content: 'c2', functionName: 'func2', targetObjectPath: '/t2.o', asm: '.text\n' },
+      ];
+
+      const onPromptComplete = vi.fn(async () => {});
+      await manager.runPipelines(prompts, onPromptComplete);
+
+      expect(onPromptComplete).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not stop the pipeline if onPromptComplete throws', async () => {
+      const manager = new PluginManager(defaultTestPipelineConfig);
+      manager.register(createSuccessPlugin('plugin1', 'Plugin 1'));
+
+      const prompts = [
+        { path: 'p1.md', content: 'c1', functionName: 'func1', targetObjectPath: '/t1.o', asm: '.text\n' },
+        { path: 'p2.md', content: 'c2', functionName: 'func2', targetObjectPath: '/t2.o', asm: '.text\n' },
+      ];
+
+      const onPromptComplete = vi.fn(async () => {
+        throw new Error('callback failure');
+      });
+
+      const results = await manager.runPipelines(prompts, onPromptComplete);
+
+      // Pipeline should complete despite callback failures
+      expect(results.results).toHaveLength(2);
+      expect(onPromptComplete).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not call onPromptComplete for aborted prompts', async () => {
+      const config = { ...defaultTestPipelineConfig, maxRetries: 1 };
+      const manager = new PluginManager(config);
+
+      let callCount = 0;
+      const plugin = createMockPlugin({
+        id: 'test',
+        name: 'Test',
+        executeFn: async (ctx) => {
+          callCount++;
+          if (callCount === 2) {
+            throw new PipelineAbortError('aborted');
+          }
+          return {
+            result: { pluginId: 'test', pluginName: 'Test', status: 'success', durationMs: 10 },
+            context: ctx,
+          };
+        },
+      });
+      manager.register(plugin);
+
+      const prompts = [
+        { path: 'p1.md', content: 'c1', functionName: 'func1', targetObjectPath: '/t1.o', asm: '.text\n' },
+        { path: 'p2.md', content: 'c2', functionName: 'func2', targetObjectPath: '/t2.o', asm: '.text\n' },
+        { path: 'p3.md', content: 'c3', functionName: 'func3', targetObjectPath: '/t3.o', asm: '.text\n' },
+      ];
+
+      const onPromptComplete = vi.fn(async () => {});
+      await manager.runPipelines(prompts, onPromptComplete);
+
+      // Only the first prompt completed; the second aborted, so no callback for it
+      expect(onPromptComplete).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('background task coordinator integration', () => {

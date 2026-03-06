@@ -96,6 +96,17 @@ export function App() {
   return (
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Partial report banner */}
+        {report.partial && (
+          <div className="mb-6 px-4 py-3 rounded-lg bg-amber-900/40 border border-amber-600/50 flex items-center gap-3">
+            <Icon name="clock" className="w-5 h-5 text-amber-400 flex-shrink-0" />
+            <p className="text-amber-200 text-sm font-medium">
+              Partial report — {report.partial.completedPrompts}/{report.partial.totalPrompts} functions completed. Run
+              still in progress.
+            </p>
+          </div>
+        )}
+
         {/* Header */}
         <Header subtitle="Run Report" rightContent={<ReportTimestamp timestamp={report.timestamp} />} />
 

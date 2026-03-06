@@ -9,6 +9,8 @@ base_*.c
 run-*/
 run-*.html
 run-*.json
+partial-run-*.html
+partial-run-*.json
 claude-cache*.json
 mizuchi*.yaml
 vendor/m2c/.venv

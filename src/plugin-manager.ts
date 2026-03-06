@@ -494,9 +494,13 @@ export class PluginManager {
 
   /**
    * Run pipeline for each prompt
+   *
+   * @param onPromptComplete Optional async callback invoked after each prompt completes
+   *   with the partial results collected so far and the total prompt count.
    */
   async runPipelines(
     prompts: Array<{ path: string; content: string; functionName: string; targetObjectPath: string; asm: string }>,
+    onPromptComplete?: (partialResults: PipelineRunResult[], totalPrompts: number) => Promise<void>,
   ): Promise<PipelineResults> {
     // Emit pipeline start event
     this.#emit({
@@ -543,6 +547,12 @@ export class PluginManager {
         });
 
         results.push(result);
+
+        try {
+          await onPromptComplete?.(results, prompts.length);
+        } catch {
+          // Best-effort — don't let callback failures stop the pipeline
+        }
       } catch (error) {
         if (error instanceof PipelineAbortError) {
           // Pipeline is aborted — stop processing and return partial results
@@ -592,6 +602,12 @@ export class PluginManager {
           attemptsUsed: 0,
           durationMs: 0,
         });
+
+        try {
+          await onPromptComplete?.(results, prompts.length);
+        } catch {
+          // Best-effort — don't let callback failures stop the pipeline
+        }
       }
     }
 

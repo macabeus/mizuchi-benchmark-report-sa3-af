@@ -30,8 +30,11 @@ import { ObjdiffConfig, ObjdiffPlugin, objdiffConfigSchema } from '~/plugins/obj
 import { loadPrompts } from '~/prompt-loader.js';
 import {
   type ReportPluginConfigs,
+  deleteFileIfExists,
   generateHtmlReport,
+  generateHtmlReportAtomic,
   saveJsonReport,
+  saveJsonReportAtomic,
   transformToReport,
 } from '~/report-generator/index.js';
 import { BackgroundTaskCoordinator } from '~/shared/background-task-coordinator.js';
@@ -41,7 +44,7 @@ import { PipelineConfig } from '~/shared/config';
 import { Objdiff } from '~/shared/objdiff.js';
 import type { PipelineEvent, PluginInfo } from '~/shared/pipeline-events.js';
 import { installSdkErrorHandlers } from '~/shared/sdk-error-handlers.js';
-import type { PipelineResults, StatusStat } from '~/shared/types.js';
+import type { PipelineResults, PipelineRunResult, StatusStat } from '~/shared/types.js';
 
 export const options = z.object({
   config: z
@@ -834,19 +837,14 @@ async function runPipeline(
     // Register plugins for the ai-powered phase
     manager.register(claudePlugin).register(compilerPlugin).register(objdiffPlugin);
 
-    // Run the pipeline
-    const results = await manager.runPipelines(prompts);
-
-    // Save cache after pipelines completes
-    await claudePlugin.saveCache();
-
-    await compilerPlugin.cleanup();
-
+    // Compute timestamp and file paths up front so partial and final files share the same timestamp
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     const htmlPath = path.join(pipelineConfig.outputDir, `run-report-${timestamp}.html`);
     const jsonPath = path.join(pipelineConfig.outputDir, `run-results-${timestamp}.json`);
+    const partialHtmlPath = path.join(pipelineConfig.outputDir, `partial-run-report-${timestamp}.html`);
+    const partialJsonPath = path.join(pipelineConfig.outputDir, `partial-run-results-${timestamp}.json`);
 
-    // Transform results to report format
+    // Plugin configs for report transformation (shared between partial and final reports)
     const pluginConfigs: ReportPluginConfigs = {
       claudeRunner: {
         stallThreshold: claudeRunnerConfig.stallThreshold,
@@ -857,9 +855,44 @@ async function runPipeline(
         compilerScript: pipelineConfig.compilerScript,
       },
     };
+
+    // Callback invoked after each prompt completes — writes partial reports atomically
+    const onPromptComplete = async (partialResults: PipelineRunResult[], totalPrompts: number) => {
+      const partialPipelineResults: PipelineResults = {
+        timestamp: new Date().toISOString(),
+        config: pipelineConfig,
+        results: partialResults,
+        summary: calculateSummary(partialResults),
+      };
+      const partialReport = transformToReport(partialPipelineResults, pluginConfigs, {
+        completedPrompts: partialResults.length,
+        totalPrompts,
+      });
+
+      try {
+        await saveJsonReportAtomic(partialReport, partialJsonPath);
+      } catch {
+        // Best-effort
+      }
+      try {
+        await generateHtmlReportAtomic(partialReport, partialHtmlPath);
+      } catch {
+        // Best-effort
+      }
+    };
+
+    // Run the pipeline
+    const results = await manager.runPipelines(prompts, onPromptComplete);
+
+    // Save cache after pipelines completes
+    await claudePlugin.saveCache();
+
+    await compilerPlugin.cleanup();
+
+    // Transform results to report format
     const report = transformToReport(results, pluginConfigs);
 
-    // Save reports sequentially to ensure both complete even if one fails
+    // Save final reports sequentially to ensure both complete even if one fails
     try {
       await saveJsonReport(report, jsonPath);
     } catch {
@@ -871,6 +904,10 @@ async function runPipeline(
     } catch {
       // Silently handle HTML report errors
     }
+
+    // Delete partial files now that final reports are written
+    await deleteFileIfExists(partialJsonPath);
+    await deleteFileIfExists(partialHtmlPath);
 
     setState((prev) => ({ ...prev, phase: 'complete', results, htmlReportPath: htmlPath }));
 
@@ -903,4 +940,18 @@ async function runPipeline(
       process.exit(1);
     }, 1);
   }
+}
+
+/**
+ * Calculate summary statistics from a list of pipeline run results.
+ * Used for partial reports (the PluginManager calculates this internally for final results).
+ */
+function calculateSummary(results: PipelineRunResult[]) {
+  const totalPrompts = results.length;
+  const successfulPrompts = results.filter((r) => r.success).length;
+  const successRate = totalPrompts > 0 ? (successfulPrompts / totalPrompts) * 100 : 0;
+  const avgAttempts = results.length > 0 ? results.reduce((sum, r) => sum + r.attempts.length, 0) / results.length : 0;
+  const totalDurationMs = results.reduce((sum, r) => sum + r.totalDurationMs, 0);
+
+  return { totalPrompts, successfulPrompts, successRate, avgAttempts, totalDurationMs };
 }
