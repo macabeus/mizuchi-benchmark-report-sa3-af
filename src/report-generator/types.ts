@@ -41,7 +41,7 @@ export type ReportContentBlock = ReportTextBlock | ReportToolUseBlock | ReportTo
  * Chat message in a conversation
  */
 export interface ReportChatMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: 'user' | 'assistant' | 'system' | 'error';
   content: string | ReportContentBlock[];
 }
 

@@ -154,6 +154,10 @@ export const claudeRunnerConfigSchema = z
       })
       .optional()
       .describe('Soft timeout: gives Claude a chance to submit before hard timeout'),
+    debug: z
+      .boolean()
+      .default(false)
+      .describe('Enable debug mode for the Claude Code subprocess. Writes verbose logs to stderr'),
   })
   .refine((config) => !config.softTimeout || config.softTimeout.softTimeoutMs < config.timeoutMs, {
     message: 'softTimeout.softTimeoutMs must be less than timeoutMs',
@@ -425,6 +429,8 @@ export interface ClaudeRunnerResult {
   softTimeoutTriggered: boolean;
   tokenUsage?: TokenUsageMap;
   queryTiming?: QueryTiming;
+  /** Captured stderr from the Claude Code subprocess, if any */
+  subprocessStderr?: string;
 }
 
 /**
@@ -486,6 +492,9 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
   #mcpServer: McpServer;
   #cliPrompt?: CliPrompt;
 
+  // Captured stderr from the Claude Code subprocess (reset per query)
+  #stderrChunks: string[] = [];
+
   constructor({
     config,
     pipelineConfig,
@@ -524,6 +533,10 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
             cwd: pipelineConfig.projectPath,
             mcpServers: {
               mizuchi: this.#mcpServer,
+            },
+            debug: config.debug,
+            stderr: (data: string) => {
+              this.#stderrChunks.push(data);
             },
           },
         }) as unknown as Query);
@@ -807,89 +820,102 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
     const contentBlocks: ContentBlock[] = [];
     let lastAssistantError: SDKAssistantMessageError | undefined;
 
-    for await (const msg of queryObj) {
-      if (msg.type === 'system' && msg.session_id) {
-        this.#sessionId = msg.session_id;
-      } else if (msg.type === 'assistant') {
-        // Track error type from assistant messages (e.g., 'rate_limit', 'billing_error')
-        if (msg.error) {
-          lastAssistantError = msg.error;
-        }
-
-        if (msg.message?.content) {
-          if (msg.message.id) {
-            this.#lastMessageId = msg.message.id;
+    try {
+      for await (const msg of queryObj) {
+        if (msg.type === 'system' && msg.session_id) {
+          this.#sessionId = msg.session_id;
+        } else if (msg.type === 'assistant') {
+          // Track error type from assistant messages (e.g., 'rate_limit', 'billing_error')
+          if (msg.error) {
+            lastAssistantError = msg.error;
           }
+
+          if (msg.message?.content) {
+            if (msg.message.id) {
+              this.#lastMessageId = msg.message.id;
+            }
+            for (const block of msg.message.content) {
+              if (block.type === 'text' && 'text' in block && block.text) {
+                responseText += block.text;
+                contentBlocks.push({ type: 'text', text: block.text });
+              } else if (block.type === 'tool_use' && 'id' in block && 'name' in block && 'input' in block) {
+                contentBlocks.push({
+                  type: 'tool_use',
+                  id: block.id,
+                  name: block.name,
+                  input: block.input as Record<string, unknown>,
+                });
+              }
+            }
+          }
+        } else if (msg.type === 'user' && msg.message?.content) {
+          // Tool results come as user messages
           for (const block of msg.message.content) {
-            if (block.type === 'text' && 'text' in block && block.text) {
-              responseText += block.text;
-              contentBlocks.push({ type: 'text', text: block.text });
-            } else if (block.type === 'tool_use' && 'id' in block && 'name' in block && 'input' in block) {
+            if (block.type === 'tool_result' && 'tool_use_id' in block && 'content' in block) {
               contentBlocks.push({
-                type: 'tool_use',
-                id: block.id,
-                name: block.name,
-                input: block.input as Record<string, unknown>,
+                type: 'tool_result',
+                tool_use_id: block.tool_use_id,
+                content: typeof block.content === 'string' ? block.content : JSON.stringify(block.content),
               });
             }
           }
         }
-      } else if (msg.type === 'user' && msg.message?.content) {
-        // Tool results come as user messages
-        for (const block of msg.message.content) {
-          if (block.type === 'tool_result' && 'tool_use_id' in block && 'content' in block) {
-            contentBlocks.push({
-              type: 'tool_result',
-              tool_use_id: block.tool_use_id,
-              content: typeof block.content === 'string' ? block.content : JSON.stringify(block.content),
-            });
+
+        // Emit live status update after processing each message
+        if (this.#statusCallback) {
+          this.#emitStatus(responseText, contentBlocks);
+        }
+
+        if (msg.type === 'result') {
+          // Accumulate token usage from modelUsage (cumulative across all API roundtrips)
+          if (msg.modelUsage) {
+            for (const [model, mu] of Object.entries(msg.modelUsage)) {
+              const entry = (this.#tokenUsage[model] ??= {
+                inputTokens: 0,
+                outputTokens: 0,
+                cacheReadInputTokens: 0,
+                cacheCreationInputTokens: 0,
+                costUsd: 0,
+              });
+              entry.inputTokens += mu.inputTokens;
+              entry.outputTokens += mu.outputTokens;
+              entry.cacheReadInputTokens += mu.cacheReadInputTokens;
+              entry.cacheCreationInputTokens += mu.cacheCreationInputTokens;
+              entry.costUsd += mu.costUSD;
+            }
+          }
+
+          // Accumulate timing from result message
+          if (msg.duration_api_ms !== undefined) {
+            this.#queryTiming.durationApiMs += msg.duration_api_ms;
+            this.#queryTiming.durationMs += msg.duration_ms ?? 0;
+            this.#queryTiming.numTurns += msg.num_turns ?? 0;
+          }
+
+          if (msg.subtype && msg.subtype !== 'success') {
+            const errors = msg.errors ? msg.errors.join(', ') : 'Unknown error';
+
+            // Detect usage limit errors (plan-level rate limit or billing error)
+            if (lastAssistantError === 'rate_limit' || lastAssistantError === 'billing_error') {
+              throw new UsageLimitError(errors);
+            }
+
+            throw new Error(`Claude error (${msg.subtype}): ${errors}`);
           }
         }
       }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
-      // Emit live status update after processing each message
-      if (this.#statusCallback) {
-        this.#emitStatus(responseText, contentBlocks);
+      if (contentBlocks.length || responseText) {
+        this.#conversationHistory.push({ role: 'error', content: contentBlocks || responseText });
+      } else {
+        this.#conversationHistory.push({ role: 'error', content: `Exception ${errorMessage}` });
       }
 
-      if (msg.type === 'result') {
-        // Accumulate token usage from modelUsage (cumulative across all API roundtrips)
-        if (msg.modelUsage) {
-          for (const [model, mu] of Object.entries(msg.modelUsage)) {
-            const entry = (this.#tokenUsage[model] ??= {
-              inputTokens: 0,
-              outputTokens: 0,
-              cacheReadInputTokens: 0,
-              cacheCreationInputTokens: 0,
-              costUsd: 0,
-            });
-            entry.inputTokens += mu.inputTokens;
-            entry.outputTokens += mu.outputTokens;
-            entry.cacheReadInputTokens += mu.cacheReadInputTokens;
-            entry.cacheCreationInputTokens += mu.cacheCreationInputTokens;
-            entry.costUsd += mu.costUSD;
-          }
-        }
-
-        // Accumulate timing from result message
-        if (msg.duration_api_ms !== undefined) {
-          this.#queryTiming.durationApiMs += msg.duration_api_ms;
-          this.#queryTiming.durationMs += msg.duration_ms ?? 0;
-          this.#queryTiming.numTurns += msg.num_turns ?? 0;
-        }
-
-        if (msg.subtype && msg.subtype !== 'success') {
-          const errors = msg.errors ? msg.errors.join(', ') : 'Unknown error';
-
-          // Detect usage limit errors (plan-level rate limit or billing error)
-          if (lastAssistantError === 'rate_limit' || lastAssistantError === 'billing_error') {
-            throw new UsageLimitError(errors);
-          }
-
-          throw new Error(`Claude error (${msg.subtype}): ${errors}`);
-        }
-      }
+      throw error;
     }
+
     return { text: responseText, contentBlocks };
   }
 
@@ -974,6 +1000,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
 
     // Create new query with timeout
     const model = this.#config.model || DEFAULT_MODEL;
+    this.#stderrChunks = [];
     this.#currentQuery = this.#queryFactory(this.#config.kickoffMessage, { model });
     const activeQuery = this.#currentQuery;
     const promptHash = this.#initialPromptHash;
@@ -1036,6 +1063,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
     // Note: Currently the SDK only supports resuming from the latest message via session ID.
     // The lastMessageId is stored for future SDK support of message-level resumption.
     const model = this.#config.model || DEFAULT_MODEL;
+    this.#stderrChunks = [];
     this.#currentQuery = this.#queryFactory(followUpPrompt, { model, resume: this.#sessionId! });
     const activeQuery = this.#currentQuery;
 
@@ -1412,13 +1440,19 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
         throw error;
       }
 
+      let errorMessage = error instanceof Error ? error.message : String(error);
+      const stderr = this.#stderrChunks.join('').trim();
+      if (stderr) {
+        errorMessage += `\n\nSubprocess stderr:\n${stderr}`;
+      }
+
       return {
         result: {
           pluginId: this.id,
           pluginName: this.name,
           status: 'failure',
           durationMs: Date.now() - startTime,
-          error: error instanceof Error ? error.message : String(error),
+          error: errorMessage,
           data: {
             fromCache: false,
             generatedCode: '',
@@ -1426,6 +1460,7 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
             softTimeoutTriggered: this.#softTimeoutTriggered,
             tokenUsage: this.#getAttemptTokenUsage(tokenUsageBeforeAttempt),
             queryTiming: this.#getAttemptQueryTiming(timingBeforeAttempt),
+            subprocessStderr: stderr || undefined,
           },
         },
         context,
@@ -1565,6 +1600,15 @@ export class ClaudeRunnerPlugin implements Plugin<ClaudeRunnerResult> {
         type: 'message',
         title: 'Stats',
         message: lines.join('\n'),
+      });
+    }
+
+    // Add subprocess stderr section if captured
+    if (result.data?.subprocessStderr) {
+      sections.push({
+        type: 'message',
+        title: 'Subprocess Stderr',
+        message: result.data.subprocessStderr,
       });
     }
 

@@ -167,6 +167,7 @@ const defaultPluginConfig: ClaudeRunnerConfig = {
   kickoffMessage: 'Decompile the function.',
   stallThreshold: 3,
   toolCallLimit: 7,
+  debug: false,
 };
 
 const testCCompiler = new CCompiler(getArmCompilerScript());

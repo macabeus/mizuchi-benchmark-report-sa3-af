@@ -30,6 +30,24 @@ export function ChatSection({ messages }: ChatSectionProps) {
           );
         }
 
+        if (msg.role === 'error') {
+          return (
+            <div key={i} className="flex justify-center">
+              <div className="w-full max-w-[95%] rounded-xl overflow-hidden bg-gradient-to-br from-red-900/15 to-red-900/25 border border-red-500/30">
+                <div className="px-4 py-2 border-b bg-red-600/15 border-red-500/25">
+                  <div className="flex items-center justify-center gap-2">
+                    <Icon name="alertCircle" className="w-4 h-4 text-red-400" />
+                    <span className="text-xs font-medium text-red-400">Error</span>
+                  </div>
+                </div>
+                <div className="p-4 max-h-[600px] overflow-y-auto [scrollbar-width:thin]">
+                  <MessageContentRenderer content={msg.content} />
+                </div>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div

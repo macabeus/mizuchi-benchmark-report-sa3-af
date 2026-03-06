@@ -123,7 +123,7 @@ export type ContentBlock = TextBlock | ToolUseBlock | ToolResultBlock;
  * Chat message in a conversation
  */
 export interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: 'user' | 'assistant' | 'system' | 'error';
   content: string | ContentBlock[];
 }
 
