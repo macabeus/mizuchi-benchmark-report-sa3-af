@@ -1,0 +1,38 @@
+You are decompiling an assembly function called `func_800BC368_jp` in MIPS from a Nintendo 64 game.
+
+
+
+
+
+
+
+
+
+
+
+# Primary Objective
+
+Decompile the following target assembly function from `asm/jp/code/6DE300.s` into clean, readable C code that compiles to an assembly matching EXACTLY the original one.
+
+```asm
+glabel func_800BC368_jp
+nonmatching func_800BC368_jp, 0x2C
+    /* 6E0008 800BC368 27BDFFE0 */  addiu       $sp, $sp, -0x20
+    /* 6E000C 800BC36C AFA60028 */  sw          $a2, 0x28($sp)
+    /* 6E0010 800BC370 30C6FFFF */  andi        $a2, $a2, 0xFFFF
+    /* 6E0014 800BC374 AFBF001C */  sw          $ra, 0x1C($sp)
+    /* 6E0018 800BC378 240E000B */  addiu       $t6, $zero, 0xB
+    /* 6E001C 800BC37C 0C02F0A3 */  jal         func_800BC28C_jp
+    /* 6E0020 800BC380 AFAE0010 */   sw         $t6, 0x10($sp)
+    /* 6E0024 800BC384 8FBF001C */  lw          $ra, 0x1C($sp)
+    /* 6E0028 800BC388 27BD0020 */  addiu       $sp, $sp, 0x20
+    /* 6E002C 800BC38C 03E00008 */  jr          $ra
+    /* 6E0030 800BC390 00000000 */   nop
+endlabel func_800BC368_jp
+```
+
+# Rules
+
+- In order to decompile this function, you may need to create new types. Include them on the result.
+
+- SHOW THE ENTIRE CODE WITHOUT CROPPING.

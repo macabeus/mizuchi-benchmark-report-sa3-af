@@ -1,0 +1,49 @@
+You are decompiling an assembly function called `func_80A78020_jp` in MIPS from a Nintendo 64 game.
+
+
+
+
+
+
+
+
+
+
+
+# Primary Objective
+
+Decompile the following target assembly function from `asm/jp/nonmatchings/overlays/actors/ovl_Tokyoso_Control/ac_tokyoso_control/func_80A78020_jp.s` into clean, readable C code that compiles to an assembly matching EXACTLY the original one.
+
+```asm
+glabel func_80A78020_jp
+nonmatching func_80A78020_jp, 0x58
+    /* 9382C0 80A78020 27BDFFE8 */  addiu       $sp, $sp, -0x18
+    /* 9382C4 80A78024 AFBF0014 */  sw          $ra, 0x14($sp)
+    /* 9382C8 80A78028 AFA40018 */  sw          $a0, 0x18($sp)
+    /* 9382CC 80A7802C 0C29DF59 */  jal         func_80A77D64_jp
+    /* 9382D0 80A78030 8FA40018 */   lw         $a0, 0x18($sp)
+    /* 9382D4 80A78034 3C0E8013 */  lui         $t6, %hi(common_data + 0x1004C)
+    /* 9382D8 80A78038 8DCE6EEC */  lw          $t6, %lo(common_data + 0x1004C)($t6)
+    /* 9382DC 80A7803C 8FA40018 */  lw          $a0, 0x18($sp)
+    /* 9382E0 80A78040 24050065 */  addiu       $a1, $zero, 0x65
+    /* 9382E4 80A78044 8DD90104 */  lw          $t9, 0x104($t6)
+    /* 9382E8 80A78048 00003025 */  or          $a2, $zero, $zero
+    /* 9382EC 80A7804C 0320F809 */  jalr        $t9
+    /* 9382F0 80A78050 00000000 */   nop
+    /* 9382F4 80A78054 8FA20018 */  lw          $v0, 0x18($sp)
+    /* 9382F8 80A78058 240F0065 */  addiu       $t7, $zero, 0x65
+    /* 9382FC 80A7805C 24180002 */  addiu       $t8, $zero, 0x2
+    /* 938300 80A78060 A44F092C */  sh          $t7, 0x92C($v0)
+    /* 938304 80A78064 A058092B */  sb          $t8, 0x92B($v0)
+    /* 938308 80A78068 8FBF0014 */  lw          $ra, 0x14($sp)
+    /* 93830C 80A7806C 27BD0018 */  addiu       $sp, $sp, 0x18
+    /* 938310 80A78070 03E00008 */  jr          $ra
+    /* 938314 80A78074 00000000 */   nop
+endlabel func_80A78020_jp
+```
+
+# Rules
+
+- In order to decompile this function, you may need to create new types. Include them on the result.
+
+- SHOW THE ENTIRE CODE WITHOUT CROPPING.

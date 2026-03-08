@@ -1,0 +1,68 @@
+functionName: func_80A77190_jp
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/af/build/src/overlays/actors/ovl_Yatai/ac_yatai.o
+asm: |
+  glabel func_80A77190_jp
+  nonmatching func_80A77190_jp, 0xE8
+      /* 937430 80A77190 27BDFFC0 */  addiu       $sp, $sp, -0x40
+      /* 937434 80A77194 AFBF001C */  sw          $ra, 0x1C($sp)
+      /* 937438 80A77198 AFA40040 */  sw          $a0, 0x40($sp)
+      /* 93743C 80A7719C AFA50044 */  sw          $a1, 0x44($sp)
+      /* 937440 80A771A0 0C02C721 */  jal         get_player_actor_withoutCheck
+      /* 937444 80A771A4 8FA40044 */   lw         $a0, 0x44($sp)
+      /* 937448 80A771A8 8FAE0040 */  lw          $t6, 0x40($sp)
+      /* 93744C 80A771AC AFA20034 */  sw          $v0, 0x34($sp)
+      /* 937450 80A771B0 27A40030 */  addiu       $a0, $sp, 0x30
+      /* 937454 80A771B4 8DD80028 */  lw          $t8, 0x28($t6)
+      /* 937458 80A771B8 27A5002C */  addiu       $a1, $sp, 0x2C
+      /* 93745C 80A771BC AFB80008 */  sw          $t8, 0x8($sp)
+      /* 937460 80A771C0 8DC7002C */  lw          $a3, 0x2C($t6)
+      /* 937464 80A771C4 8FA60008 */  lw          $a2, 0x8($sp)
+      /* 937468 80A771C8 AFA7000C */  sw          $a3, 0xC($sp)
+      /* 93746C 80A771CC 8DD80030 */  lw          $t8, 0x30($t6)
+      /* 937470 80A771D0 0C0221C4 */  jal         mFI_Wpos2BlockNum
+      /* 937474 80A771D4 AFB80010 */   sw         $t8, 0x10($sp)
+      /* 937478 80A771D8 8FB90034 */  lw          $t9, 0x34($sp)
+      /* 93747C 80A771DC 27A40028 */  addiu       $a0, $sp, 0x28
+      /* 937480 80A771E0 27A50024 */  addiu       $a1, $sp, 0x24
+      /* 937484 80A771E4 8F290028 */  lw          $t1, 0x28($t9)
+      /* 937488 80A771E8 AFA90008 */  sw          $t1, 0x8($sp)
+      /* 93748C 80A771EC 8F27002C */  lw          $a3, 0x2C($t9)
+      /* 937490 80A771F0 8FA60008 */  lw          $a2, 0x8($sp)
+      /* 937494 80A771F4 AFA7000C */  sw          $a3, 0xC($sp)
+      /* 937498 80A771F8 8F290030 */  lw          $t1, 0x30($t9)
+      /* 93749C 80A771FC 0C0221C4 */  jal         mFI_Wpos2BlockNum
+      /* 9374A0 80A77200 AFA90010 */   sw         $t1, 0x10($sp)
+      /* 9374A4 80A77204 24040001 */  addiu       $a0, $zero, 0x1
+      /* 9374A8 80A77208 0C01F3C0 */  jal         mDemo_Check
+      /* 9374AC 80A7720C 8FA50034 */   lw         $a1, 0x34($sp)
+      /* 9374B0 80A77210 14400010 */  bnez        $v0, .L80A77254
+      /* 9374B4 80A77214 24040005 */   addiu      $a0, $zero, 0x5
+      /* 9374B8 80A77218 0C01F3C0 */  jal         mDemo_Check
+      /* 9374BC 80A7721C 8FA50034 */   lw         $a1, 0x34($sp)
+      /* 9374C0 80A77220 1440000C */  bnez        $v0, .L80A77254
+      /* 9374C4 80A77224 8FAA0030 */   lw         $t2, 0x30($sp)
+      /* 9374C8 80A77228 8FAB0028 */  lw          $t3, 0x28($sp)
+      /* 9374CC 80A7722C 8FAC002C */  lw          $t4, 0x2C($sp)
+      /* 9374D0 80A77230 8FAD0024 */  lw          $t5, 0x24($sp)
+      /* 9374D4 80A77234 154B0003 */  bne         $t2, $t3, .L80A77244
+      /* 9374D8 80A77238 00000000 */   nop
+      /* 9374DC 80A7723C 518D0006 */  beql        $t4, $t5, .L80A77258
+      /* 9374E0 80A77240 8FA40040 */   lw         $a0, 0x40($sp)
+    .L80A77244:
+      /* 9374E4 80A77244 0C0159FA */  jal         Actor_delete
+      /* 9374E8 80A77248 8FA40040 */   lw         $a0, 0x40($sp)
+      /* 9374EC 80A7724C 10000007 */  b           .L80A7726C
+      /* 9374F0 80A77250 8FBF001C */   lw         $ra, 0x1C($sp)
+    .L80A77254:
+      /* 9374F4 80A77254 8FA40040 */  lw          $a0, 0x40($sp)
+    .L80A77258:
+      /* 9374F8 80A77258 8FA50044 */  lw          $a1, 0x44($sp)
+      /* 9374FC 80A7725C 8C9902A0 */  lw          $t9, 0x2A0($a0)
+      /* 937500 80A77260 0320F809 */  jalr        $t9
+      /* 937504 80A77264 00000000 */   nop
+      /* 937508 80A77268 8FBF001C */  lw          $ra, 0x1C($sp)
+    .L80A7726C:
+      /* 93750C 80A7726C 27BD0040 */  addiu       $sp, $sp, 0x40
+      /* 937510 80A77270 03E00008 */  jr          $ra
+      /* 937514 80A77274 00000000 */   nop
+  endlabel func_80A77190_jp

@@ -1,0 +1,29 @@
+functionName: sub_8068748
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/sa3/build/gba/sa3/asm/code.o
+asm: |
+  	thumb_func_start sub_8068748
+  sub_8068748: @ 0x08068748
+  	push {lr}
+  	adds r2, r0, #0
+  	ldrh r0, [r2, #0x18]
+  	subs r0, #1
+  	strh r0, [r2, #0x18]
+  	lsls r0, r0, #0x10
+  	cmp r0, #0
+  	bne _0806876E
+  	ldr r0, _08068774 @ =gCamera
+  	ldr r1, [r0, #0x18]
+  	ldr r0, [r0, #0x1c]
+  	adds r1, r1, r0
+  	asrs r1, r1, #1
+  	lsls r1, r1, #8
+  	str r1, [r2, #8]
+  	adds r0, r2, #0
+  	movs r1, #0x2b
+  	bl sub_80676D4
+  _0806876E:
+  	movs r0, #0
+  	pop {r1}
+  	bx r1
+  	.align 2, 0
+  _08068774: .4byte gCamera

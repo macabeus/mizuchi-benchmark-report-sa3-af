@@ -1,0 +1,698 @@
+{
+  "func_80062760_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_8007D810_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80091DFC_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80093340_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_800BC33C_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_800BC368_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808CEB74_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808D9348_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_8095D1E0_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80A77190_jp": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "My_Room_Actor_move": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "aBGY_actor_ct": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808B83B4_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [
+          {
+            "attempt": 1,
+            "pattern": "the decompiled code",
+            "context": "Now I have enough context. Let me compile and test the decompiled code: The assembly differs in stack frame size and float handling. I need to declare proper function pro..."
+          }
+        ],
+        "totalRefs": 1
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808C61D8_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80913010_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_8096F348_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_809AFAF0_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_809D18C8_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80A242E0_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80A24A8C_jp": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "aEDZ_actor_init": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808BB604_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808BFAC4_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808C9FD0_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808CE8DC_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_808D6BAC_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80954E0C_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_809CD6AC_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80A0A928_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  },
+  "func_80A78020_jp": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "references": [],
+        "totalRefs": 0
+      }
+    ]
+  }
+}

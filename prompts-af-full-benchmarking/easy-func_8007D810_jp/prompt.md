@@ -1,0 +1,42 @@
+You are decompiling an assembly function called `func_8007D810_jp` in MIPS from a Nintendo 64 game.
+
+
+
+
+
+
+
+
+
+
+
+# Primary Objective
+
+Decompile the following target assembly function from `asm/jp/code/6A0DE0.s` into clean, readable C code that compiles to an assembly matching EXACTLY the original one.
+
+```asm
+glabel func_8007D810_jp
+nonmatching func_8007D810_jp, 0x38
+    /* 6A14B0 8007D810 27BDFFE8 */  addiu       $sp, $sp, -0x18
+    /* 6A14B4 8007D814 AFBF0014 */  sw          $ra, 0x14($sp)
+    /* 6A14B8 8007D818 3C028013 */  lui         $v0, %hi(common_data + 0x10003)
+    /* 6A14BC 8007D81C 90426EA3 */  lbu         $v0, %lo(common_data + 0x10003)($v0)
+    /* 6A14C0 8007D820 2C410004 */  sltiu       $at, $v0, 0x4
+    /* 6A14C4 8007D824 10200004 */  beqz        $at, .L8007D838
+    /* 6A14C8 8007D828 3C012000 */   lui        $at, (0x20000006 >> 16)
+    /* 6A14CC 8007D82C 34210006 */  ori         $at, $at, (0x20000006 & 0xFFFF)
+    /* 6A14D0 8007D830 0C01F4AE */  jal         func_8007D2B8_jp
+    /* 6A14D4 8007D834 00412021 */   addu       $a0, $v0, $at
+  .L8007D838:
+    /* 6A14D8 8007D838 8FBF0014 */  lw          $ra, 0x14($sp)
+    /* 6A14DC 8007D83C 27BD0018 */  addiu       $sp, $sp, 0x18
+    /* 6A14E0 8007D840 03E00008 */  jr          $ra
+    /* 6A14E4 8007D844 00000000 */   nop
+endlabel func_8007D810_jp
+```
+
+# Rules
+
+- In order to decompile this function, you may need to create new types. Include them on the result.
+
+- SHOW THE ENTIRE CODE WITHOUT CROPPING.

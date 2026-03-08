@@ -1,0 +1,140 @@
+functionName: sub_80AC0C4
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/sa3/build/gba/sa3/asm/code_2.o
+asm: |
+  	thumb_func_start sub_80AC0C4
+  sub_80AC0C4: @ 0x080AC0C4
+  	push {r4, r5, lr}
+  	sub sp, #4
+  	ldr r0, _080AC0F0 @ =gCurTask
+  	ldr r0, [r0]
+  	ldrh r1, [r0, #6]
+  	movs r0, #0xc0
+  	lsls r0, r0, #0x12
+  	adds r4, r1, r0
+  	adds r0, r4, #0
+  	bl sub_80AC2B4
+  	ldrb r0, [r4]
+  	cmp r0, #0
+  	bne _080AC0F8
+  	ldr r0, _080AC0F4 @ =gLoadedSaveGame
+  	ldrh r1, [r0, #0x34]
+  	movs r0, #0x10
+  	ands r0, r1
+  	cmp r0, #0
+  	bne _080AC104
+  	b _080AC15C
+  	.align 2, 0
+  _080AC0F0: .4byte gCurTask
+  _080AC0F4: .4byte gLoadedSaveGame
+  _080AC0F8:
+  	ldr r0, _080AC13C @ =gLoadedSaveGame
+  	ldrh r1, [r0, #0x34]
+  	movs r0, #0x20
+  	ands r0, r1
+  	cmp r0, #0
+  	beq _080AC15C
+  _080AC104:
+  	ldr r0, _080AC140 @ =gInput
+  	ldrh r1, [r0]
+  	movs r0, #8
+  	ands r0, r1
+  	cmp r0, #0
+  	beq _080AC15C
+  	ldr r1, _080AC144 @ =0x0000FFFF
+  	movs r0, #0
+  	bl TasksDestroyInPriorityRange
+  	ldr r1, _080AC148 @ =gBackgroundsCopyQueueCursor
+  	ldr r0, _080AC14C @ =gBackgroundsCopyQueueIndex
+  	ldrb r0, [r0]
+  	strb r0, [r1]
+  	ldr r1, _080AC150 @ =gBgSpritesCount
+  	movs r0, #0
+  	strb r0, [r1]
+  	ldr r1, _080AC154 @ =gVramGraphicsCopyCursor
+  	ldr r0, _080AC158 @ =gVramGraphicsCopyQueueIndex
+  	ldrb r0, [r0]
+  	strb r0, [r1]
+  	ldrb r0, [r4]
+  	adds r0, #2
+  	lsls r0, r0, #0x18
+  	lsrs r0, r0, #0x18
+  	bl sub_80AA554
+  	b _080AC1D8
+  	.align 2, 0
+  _080AC13C: .4byte gLoadedSaveGame
+  _080AC140: .4byte gInput
+  _080AC144: .4byte 0x0000FFFF
+  _080AC148: .4byte gBackgroundsCopyQueueCursor
+  _080AC14C: .4byte gBackgroundsCopyQueueIndex
+  _080AC150: .4byte gBgSpritesCount
+  _080AC154: .4byte gVramGraphicsCopyCursor
+  _080AC158: .4byte gVramGraphicsCopyQueueIndex
+  _080AC15C:
+  	ldr r1, [r4, #0xc]
+  	adds r1, #0x80
+  	str r1, [r4, #0xc]
+  	lsrs r1, r1, #8
+  	subs r1, #0xa
+  	ldr r2, _080AC1A8 @ =strCredits_CreatedBy
+  	ldrb r5, [r4, #1]
+  	lsls r0, r5, #2
+  	adds r0, r0, r5
+  	lsls r0, r0, #3
+  	adds r2, r0, r2
+  	lsls r1, r1, #0x10
+  	asrs r1, r1, #0x10
+  	movs r3, #0x24
+  	ldrsh r0, [r2, r3]
+  	cmp r1, r0
+  	blt _080AC1D8
+  	adds r0, r2, #0
+  	adds r0, #0x26
+  	ldrb r0, [r0]
+  	cmp r0, #2
+  	bne _080AC1B0
+  	ldrb r1, [r4, #2]
+  	ldr r0, _080AC1AC @ =0x0000058C
+  	adds r2, r4, r0
+  	adds r3, r4, #0
+  	adds r3, #8
+  	adds r0, r4, #0
+  	adds r0, #0xc
+  	str r0, [sp]
+  	adds r0, r5, #0
+  	bl sub_80ACA80
+  	ldrb r0, [r4, #2]
+  	adds r0, #1
+  	strb r0, [r4, #2]
+  	b _080AC1C2
+  	.align 2, 0
+  _080AC1A8: .4byte strCredits_CreatedBy
+  _080AC1AC: .4byte 0x0000058C
+  _080AC1B0:
+  	adds r1, r4, #0
+  	adds r1, #0x14
+  	adds r2, r4, #0
+  	adds r2, #8
+  	adds r3, r4, #0
+  	adds r3, #0xc
+  	adds r0, r5, #0
+  	bl sub_80AC9E8
+  _080AC1C2:
+  	ldrb r0, [r4, #1]
+  	adds r0, #1
+  	strb r0, [r4, #1]
+  	lsls r0, r0, #0x18
+  	lsrs r0, r0, #0x18
+  	cmp r0, #0x7e
+  	bls _080AC1D8
+  	ldr r0, _080AC1E0 @ =gCurTask
+  	ldr r1, [r0]
+  	ldr r0, _080AC1E4 @ =sub_80AC1E8
+  	str r0, [r1, #8]
+  _080AC1D8:
+  	add sp, #4
+  	pop {r4, r5}
+  	pop {r0}
+  	bx r0
+  	.align 2, 0
+  _080AC1E0: .4byte gCurTask
+  _080AC1E4: .4byte sub_80AC1E8

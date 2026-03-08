@@ -1,0 +1,34 @@
+functionName: func_808BFAC4_jp
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/af/build/src/overlays/actors/player_actor/m_player.o
+asm: |
+  glabel func_808BFAC4_jp
+  nonmatching func_808BFAC4_jp, 0x6C
+      /* 7B9194 808BFAC4 27BDFFD8 */  addiu       $sp, $sp, -0x28
+      /* 7B9198 808BFAC8 AFBF0024 */  sw          $ra, 0x24($sp)
+      /* 7B919C 808BFACC AFA40028 */  sw          $a0, 0x28($sp)
+      /* 7B91A0 808BFAD0 AFA5002C */  sw          $a1, 0x2C($sp)
+      /* 7B91A4 808BFAD4 04C00011 */  bltz        $a2, .L808BFB1C
+      /* 7B91A8 808BFAD8 28C1001A */   slti       $at, $a2, 0x1A
+      /* 7B91AC 808BFADC 1020000F */  beqz        $at, .L808BFB1C
+      /* 7B91B0 808BFAE0 00067080 */   sll        $t6, $a2, 2
+      /* 7B91B4 808BFAE4 3C02808E */  lui         $v0, %hi(D_808DF908_jp)
+      /* 7B91B8 808BFAE8 004E1021 */  addu        $v0, $v0, $t6
+      /* 7B91BC 808BFAEC 8C42F908 */  lw          $v0, %lo(D_808DF908_jp)($v0)
+      /* 7B91C0 808BFAF0 8FA4003C */  lw          $a0, 0x3C($sp)
+      /* 7B91C4 808BFAF4 8FA50028 */  lw          $a1, 0x28($sp)
+      /* 7B91C8 808BFAF8 10400008 */  beqz        $v0, .L808BFB1C
+      /* 7B91CC 808BFAFC 8FA6002C */   lw         $a2, 0x2C($sp)
+      /* 7B91D0 808BFB00 8FAF0038 */  lw          $t7, 0x38($sp)
+      /* 7B91D4 808BFB04 8FB80040 */  lw          $t8, 0x40($sp)
+      /* 7B91D8 808BFB08 8FB90044 */  lw          $t9, 0x44($sp)
+      /* 7B91DC 808BFB0C AFAF0010 */  sw          $t7, 0x10($sp)
+      /* 7B91E0 808BFB10 AFB80014 */  sw          $t8, 0x14($sp)
+      /* 7B91E4 808BFB14 0040F809 */  jalr        $v0
+      /* 7B91E8 808BFB18 AFB90018 */   sw         $t9, 0x18($sp)
+    .L808BFB1C:
+      /* 7B91EC 808BFB1C 24020001 */  addiu       $v0, $zero, 0x1
+      /* 7B91F0 808BFB20 8FBF0024 */  lw          $ra, 0x24($sp)
+      /* 7B91F4 808BFB24 27BD0028 */  addiu       $sp, $sp, 0x28
+      /* 7B91F8 808BFB28 03E00008 */  jr          $ra
+      /* 7B91FC 808BFB2C 00000000 */   nop
+  endlabel func_808BFAC4_jp

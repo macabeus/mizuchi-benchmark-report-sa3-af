@@ -1,0 +1,54 @@
+functionName: sub_80945A0
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/sa3/build/gba/sa3/asm/code.o
+asm: |
+  	thumb_func_start sub_80945A0
+  sub_80945A0: @ 0x080945A0
+  	push {r4, lr}
+  	ldr r3, _08094600 @ =gBgScrollRegs
+  	movs r1, #4
+  	ldrsh r2, [r3, r1]
+  	movs r1, #0x18
+  	subs r1, r1, r2
+  	str r1, [r0, #0x60]
+  	movs r4, #6
+  	ldrsh r2, [r3, r4]
+  	movs r1, #0x87
+  	subs r1, r1, r2
+  	str r1, [r0, #0x64]
+  	movs r2, #4
+  	ldrsh r1, [r3, r2]
+  	movs r2, #0x19
+  	subs r1, r2, r1
+  	str r1, [r0, #0x68]
+  	movs r4, #6
+  	ldrsh r1, [r3, r4]
+  	subs r2, r2, r1
+  	str r2, [r0, #0x6c]
+  	movs r2, #4
+  	ldrsh r1, [r3, r2]
+  	rsbs r1, r1, #0
+  	adds r1, #0x50
+  	str r1, [r0, #0x78]
+  	movs r4, #6
+  	ldrsh r1, [r3, r4]
+  	rsbs r1, r1, #0
+  	adds r1, #0x5c
+  	str r1, [r0, #0x7c]
+  	adds r2, r0, #0
+  	adds r2, #0x90
+  	movs r4, #4
+  	ldrsh r1, [r3, r4]
+  	rsbs r1, r1, #0
+  	adds r1, #0x50
+  	str r1, [r2]
+  	adds r0, #0x94
+  	movs r2, #6
+  	ldrsh r1, [r3, r2]
+  	rsbs r1, r1, #0
+  	adds r1, #0x5c
+  	str r1, [r0]
+  	pop {r4}
+  	pop {r0}
+  	bx r0
+  	.align 2, 0
+  _08094600: .4byte gBgScrollRegs

@@ -1,0 +1,85 @@
+functionName: aBGY_actor_ct
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/af/build/src/overlays/actors/ovl_Buggy/ac_buggy.o
+asm: |
+  glabel aBGY_actor_ct
+  nonmatching aBGY_actor_ct, 0x138
+      /* 8CE890 809FFBC0 27BDFFB0 */  addiu       $sp, $sp, -0x50
+      /* 8CE894 809FFBC4 AFB00020 */  sw          $s0, 0x20($sp)
+      /* 8CE898 809FFBC8 00808025 */  or          $s0, $a0, $zero
+      /* 8CE89C 809FFBCC AFBF0024 */  sw          $ra, 0x24($sp)
+      /* 8CE8A0 809FFBD0 0C02C721 */  jal         get_player_actor_withoutCheck
+      /* 8CE8A4 809FFBD4 00A02025 */   or         $a0, $a1, $zero
+      /* 8CE8A8 809FFBD8 3C038013 */  lui         $v1, %hi(common_data + 0x10000)
+      /* 8CE8AC 809FFBDC 24636EA0 */  addiu       $v1, $v1, %lo(common_data + 0x10000)
+      /* 8CE8B0 809FFBE0 8C6E010C */  lw          $t6, 0x10C($v1)
+      /* 8CE8B4 809FFBE4 8C780098 */  lw          $t8, 0x98($v1)
+      /* 8CE8B8 809FFBE8 AFA20044 */  sw          $v0, 0x44($sp)
+      /* 8CE8BC 809FFBEC 39CF0003 */  xori        $t7, $t6, 0x3
+      /* 8CE8C0 809FFBF0 2DEF0001 */  sltiu       $t7, $t7, 0x1
+      /* 8CE8C4 809FFBF4 AFAF0040 */  sw          $t7, 0x40($sp)
+      /* 8CE8C8 809FFBF8 8F1900AC */  lw          $t9, 0xAC($t8)
+      /* 8CE8CC 809FFBFC 24040018 */  addiu       $a0, $zero, 0x18
+      /* 8CE8D0 809FFC00 0320F809 */  jalr        $t9
+      /* 8CE8D4 809FFC04 00000000 */   nop
+      /* 8CE8D8 809FFC08 8FA90040 */  lw          $t1, 0x40($sp)
+      /* 8CE8DC 809FFC0C 3C018000 */  lui         $at, (0x80000000 >> 16)
+      /* 8CE8E0 809FFC10 00414021 */  addu        $t0, $v0, $at
+      /* 8CE8E4 809FFC14 3C0580A0 */  lui         $a1, %hi(D_80A00C78_jp)
+      /* 8CE8E8 809FFC18 00095080 */  sll         $t2, $t1, 2
+      /* 8CE8EC 809FFC1C 3C018014 */  lui         $at, %hi(SegmentBaseAddress + 0x18)
+      /* 8CE8F0 809FFC20 00AA2821 */  addu        $a1, $a1, $t2
+      /* 8CE8F4 809FFC24 26040178 */  addiu       $a0, $s0, 0x178
+      /* 8CE8F8 809FFC28 260B0246 */  addiu       $t3, $s0, 0x246
+      /* 8CE8FC 809FFC2C AC2858B8 */  sw          $t0, %lo(SegmentBaseAddress + 0x18)($at)
+      /* 8CE900 809FFC30 AFAB0010 */  sw          $t3, 0x10($sp)
+      /* 8CE904 809FFC34 AFA4002C */  sw          $a0, 0x2C($sp)
+      /* 8CE908 809FFC38 8CA50C78 */  lw          $a1, %lo(D_80A00C78_jp)($a1)
+      /* 8CE90C 809FFC3C 00003025 */  or          $a2, $zero, $zero
+      /* 8CE910 809FFC40 0C01488A */  jal         cKF_SkeletonInfo_R_ct
+      /* 8CE914 809FFC44 260701EC */   addiu      $a3, $s0, 0x1EC
+      /* 8CE918 809FFC48 02002025 */  or          $a0, $s0, $zero
+      /* 8CE91C 809FFC4C 0C27FFE4 */  jal         func_809FFF90_jp
+      /* 8CE920 809FFC50 24050001 */   addiu      $a1, $zero, 0x1
+      /* 8CE924 809FFC54 02002025 */  or          $a0, $s0, $zero
+      /* 8CE928 809FFC58 0C27FF6A */  jal         func_809FFDA8_jp
+      /* 8CE92C 809FFC5C 24050001 */   addiu      $a1, $zero, 0x1
+      /* 8CE930 809FFC60 0C01F55E */  jal         func_8007D578_jp
+      /* 8CE934 809FFC64 00000000 */   nop
+      /* 8CE938 809FFC68 C6040028 */  lwc1        $ft0, 0x28($s0)
+      /* 8CE93C 809FFC6C 8FA40044 */  lw          $a0, 0x44($sp)
+      /* 8CE940 809FFC70 3C0142C8 */  lui         $at, (0x42C80000 >> 16)
+      /* 8CE944 809FFC74 4600218D */  trunc.w.s   $ft1, $ft0
+      /* 8CE948 809FFC78 44815000 */  mtc1        $at, $ft3
+      /* 8CE94C 809FFC7C C6080030 */  lwc1        $ft2, 0x30($s0)
+      /* 8CE950 809FFC80 C4840028 */  lwc1        $ft0, 0x28($a0)
+      /* 8CE954 809FFC84 44023000 */  mfc1        $v0, $ft1
+      /* 8CE958 809FFC88 460A4400 */  add.s       $ft4, $ft2, $ft3
+      /* 8CE95C 809FFC8C 00002825 */  or          $a1, $zero, $zero
+      /* 8CE960 809FFC90 4600218D */  trunc.w.s   $ft1, $ft0
+      /* 8CE964 809FFC94 4600848D */  trunc.w.s   $ft5, $ft4
+      /* 8CE968 809FFC98 440F3000 */  mfc1        $t7, $ft1
+      /* 8CE96C 809FFC9C 44039000 */  mfc1        $v1, $ft5
+      /* 8CE970 809FFCA0 144F0008 */  bne         $v0, $t7, .L809FFCC4
+      /* 8CE974 809FFCA4 00000000 */   nop
+      /* 8CE978 809FFCA8 C4880030 */  lwc1        $ft2, 0x30($a0)
+      /* 8CE97C 809FFCAC 4600428D */  trunc.w.s   $ft3, $ft2
+      /* 8CE980 809FFCB0 44195000 */  mfc1        $t9, $ft3
+      /* 8CE984 809FFCB4 00000000 */  nop
+      /* 8CE988 809FFCB8 14790002 */  bne         $v1, $t9, .L809FFCC4
+      /* 8CE98C 809FFCBC 00000000 */   nop
+      /* 8CE990 809FFCC0 24050001 */  addiu       $a1, $zero, 0x1
+    .L809FFCC4:
+      /* 8CE994 809FFCC4 0C28018D */  jal         func_80A00634_jp
+      /* 8CE998 809FFCC8 02002025 */   or         $a0, $s0, $zero
+      /* 8CE99C 809FFCCC 3C0142A0 */  lui         $at, (0x42A00000 >> 16)
+      /* 8CE9A0 809FFCD0 44818000 */  mtc1        $at, $ft4
+      /* 8CE9A4 809FFCD4 00000000 */  nop
+      /* 8CE9A8 809FFCD8 E6100144 */  swc1        $ft4, 0x144($s0)
+      /* 8CE9AC 809FFCDC 0C014A35 */  jal         cKF_SkeletonInfo_R_play
+      /* 8CE9B0 809FFCE0 8FA4002C */   lw         $a0, 0x2C($sp)
+      /* 8CE9B4 809FFCE4 8FBF0024 */  lw          $ra, 0x24($sp)
+      /* 8CE9B8 809FFCE8 8FB00020 */  lw          $s0, 0x20($sp)
+      /* 8CE9BC 809FFCEC 27BD0050 */  addiu       $sp, $sp, 0x50
+      /* 8CE9C0 809FFCF0 03E00008 */  jr          $ra
+      /* 8CE9C4 809FFCF4 00000000 */   nop
+  endlabel aBGY_actor_ct
