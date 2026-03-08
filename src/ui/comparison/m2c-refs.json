@@ -1,0 +1,850 @@
+{
+  "sub_80219E8": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_806A818": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_806D404": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 1,
+        "references": [
+          {
+            "attempt": 12,
+            "pattern": "initial decompil",
+            "context": "...ich is *(r3+8) = r8. ✓  So sprite is at r3+8, and Sprite.tiles (offset 0) is at r3+8. But wait, the initial decompilation said stride is 0x38 and offset is 0x48. If each sprite element is 0x38 bytes, and sprites are..."
+          }
+        ]
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8078D6C": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8087590": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80945A0": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80A3EAC": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 1,
+        "references": [
+          {
+            "attempt": 1,
+            "pattern": "initial decompil",
+            "context": "...one. Let me check if there are any nearby functions in the context: Now let me compile and test the initial decompilation with the proper struct definition: The assembly matches exactly. Here is the final C code:  ``..."
+          }
+        ]
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80ACD10": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80AE3D4": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80C5FCC": {
+    "tier": "easy",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8068C38": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_806B2F4": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 1,
+        "references": [
+          {
+            "attempt": 12,
+            "pattern": "initial decompil",
+            "context": "...must be something else - perhaps a direction variable that's -1 in this case.  Actually looking at initial decompilation hint: `s8 delta = (s8)0xFF;` - this is always -1 as a constant, so compiler optimizes it away...."
+          }
+        ]
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 14,
+        "references": [
+          {
+            "attempt": 4,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 5,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 6,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 7,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 8,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 8,
+            "pattern": "initial decompil",
+            "context": "...lsl r1, r3, #0x18 asr r1, #0x10 ldr r0, [r4] sub r0, r1 str r0, [r4] ```  The original code in the initial decompilation had `temp_r0 = 0xFF000000 >> 0x18` which is `-1`. The compiler optimized that away. I need to..."
+          },
+          {
+            "attempt": 9,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 9,
+            "pattern": "initial decompil",
+            "context": "...lsl r1, r3, #0x18 asr r1, #0x10 ldr r0, [r4] sub r0, r1 str r0, [r4] ```  The original code in the initial decompilation had `temp_r0 = 0xFF000000 >> 0x18` which is `-1`. The compiler optimized that away. I need to..."
+          },
+          {
+            "attempt": 10,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 10,
+            "pattern": "initial decompil",
+            "context": "...lsl r1, r3, #0x18 asr r1, #0x10 ldr r0, [r4] sub r0, r1 str r0, [r4] ```  The original code in the initial decompilation had `temp_r0 = 0xFF000000 >> 0x18` which is `-1`. The compiler optimized that away. I need to..."
+          },
+          {
+            "attempt": 11,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 11,
+            "pattern": "initial decompil",
+            "context": "...lsl r1, r3, #0x18 asr r1, #0x10 ldr r0, [r4] sub r0, r1 str r0, [r4] ```  The original code in the initial decompilation had `temp_r0 = 0xFF000000 >> 0x18` which is `-1`. The compiler optimized that away. I need to..."
+          },
+          {
+            "attempt": 12,
+            "pattern": "initial decompil",
+            "context": "...a compile-time constant that somehow produces the `mov r0, #0xff; lsl; asr` pattern. Looking at the initial decompilation: `temp_r0 = 0xFF000000 >> 0x18` which yields -1 as arithmetic shift.  The key insight: the com..."
+          },
+          {
+            "attempt": 12,
+            "pattern": "initial decompil",
+            "context": "...lsl r1, r3, #0x18 asr r1, #0x10 ldr r0, [r4] sub r0, r1 str r0, [r4] ```  The original code in the initial decompilation had `temp_r0 = 0xFF000000 >> 0x18` which is `-1`. The compiler optimized that away. I need to..."
+          }
+        ]
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_806C8BC": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_806D01C": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 1,
+        "references": [
+          {
+            "attempt": 1,
+            "pattern": "initial decompil",
+            "context": "...assembly stores a byte to 0x24, reads a byte from 0x1D, and stores a word to 0x40.  Looking at the initial decompilation's structure, these field accesses (`unk24` byte, `unk1D` byte, `unk40` word) could match `Chee..."
+          }
+        ]
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80720E4": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 9,
+        "references": [
+          {
+            "attempt": 4,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 5,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 6,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 7,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 8,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 9,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 10,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 11,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          },
+          {
+            "attempt": 12,
+            "pattern": "initial decompil",
+            "context": "...e struct fields at `unk130` and `unk134` are NOT Sprite* but some other struct.  Let me look at the initial decompilation more carefully and re-examine the target assembly. The field `+0x4` could be the `frameNum` in..."
+          }
+        ]
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8073ACC": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 1,
+        "references": [
+          {
+            "attempt": 1,
+            "pattern": "initial decompil",
+            "context": "...camera fields and call sub_80299D4(0x32), set gCurTask->main = sub_8073B5C  The key issue from the initial decompilation is the access to `r5->unk64 = 0x158` - `r5` is TASK_DATA and offset 0x64. Let me compile and i..."
+          }
+        ]
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8078F74": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8085618": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8087A48": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80AC0C4": {
+    "tier": "hard",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_0807F4F0": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": false,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8022934": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 2,
+        "references": [
+          {
+            "attempt": 1,
+            "pattern": "initial decompil",
+            "context": "...e index first using r0/r1, then `ldr r0, [pc]`, then `add r1, r0`, `add r1, #0xe0`.  Let me try the initial decompilation approach but fix the comparison logic: The assembly is very close to the target! The main diff..."
+          },
+          {
+            "attempt": 2,
+            "pattern": "initial decompil",
+            "context": "...e index first using r0/r1, then `ldr r0, [pc]`, then `add r1, r0`, `add r1, #0xe0`.  Let me try the initial decompilation approach but fix the comparison logic: The assembly is very close to the target! The main diff..."
+          }
+        ]
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8027834": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8068748": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8068778": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8068954": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_8077954": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_807ECFC": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80817E0": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  },
+  "sub_80AE1C8": {
+    "tier": "medium",
+    "runs": [
+      {
+        "runIndex": 0,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 1,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      },
+      {
+        "runIndex": 2,
+        "success": true,
+        "totalRefs": 0,
+        "references": []
+      }
+    ]
+  }
+}

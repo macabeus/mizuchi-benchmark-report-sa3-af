@@ -1,0 +1,22 @@
+functionName: sub_8077954
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/sa3/build/gba/sa3/asm/code.o
+asm: |
+  	thumb_func_start sub_8077954
+  sub_8077954: @ 0x08077954
+  	lsls r1, r1, #0x18
+  	adds r0, #0x80
+  	ldr r2, _08077970 @ =gUnknown_080D5904
+  	lsrs r1, r1, #0x16
+  	adds r1, r1, r2
+  	ldrh r2, [r1]
+  	strh r2, [r0, #0xc]
+  	ldrh r1, [r1, #2]
+  	strb r1, [r0, #0x1a]
+  	ldr r1, _08077974 @ =0x0000FFFF
+  	strh r1, [r0, #0x18]
+  	movs r1, #0xff
+  	strb r1, [r0, #0x1b]
+  	bx lr
+  	.align 2, 0
+  _08077970: .4byte gUnknown_080D5904
+  _08077974: .4byte 0x0000FFFF

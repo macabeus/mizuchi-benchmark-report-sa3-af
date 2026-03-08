@@ -1,0 +1,17 @@
+functionName: func_80093340_jp
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/af/build/asm/jp/code/m_handbill.o
+asm: |
+  glabel func_80093340_jp
+  nonmatching func_80093340_jp, 0x2C
+      /* 6B6FE0 80093340 27BDFFE0 */  addiu       $sp, $sp, -0x20
+      /* 6B6FE4 80093344 AFBF001C */  sw          $ra, 0x1C($sp)
+      /* 6B6FE8 80093348 8FAF0030 */  lw          $t7, 0x30($sp)
+      /* 6B6FEC 8009334C 240E000F */  addiu       $t6, $zero, 0xF
+      /* 6B6FF0 80093350 AFAE0010 */  sw          $t6, 0x10($sp)
+      /* 6B6FF4 80093354 0C024BF1 */  jal         func_80092FC4_jp
+      /* 6B6FF8 80093358 AFAF0014 */   sw         $t7, 0x14($sp)
+      /* 6B6FFC 8009335C 8FBF001C */  lw          $ra, 0x1C($sp)
+      /* 6B7000 80093360 27BD0020 */  addiu       $sp, $sp, 0x20
+      /* 6B7004 80093364 03E00008 */  jr          $ra
+      /* 6B7008 80093368 00000000 */   nop
+  endlabel func_80093340_jp

@@ -1,0 +1,10 @@
+functionName: func_80091DFC_jp
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/af/build/asm/jp/code/6B3DC0.o
+asm: |
+  glabel func_80091DFC_jp
+  nonmatching func_80091DFC_jp, 0x10
+      /* 6B5A9C 80091DFC AFA40000 */  sw          $a0, 0x0($sp)
+      /* 6B5AA0 80091E00 AFA50004 */  sw          $a1, 0x4($sp)
+      /* 6B5AA4 80091E04 03E00008 */  jr          $ra
+      /* 6B5AA8 80091E08 00000000 */   nop
+  endlabel func_80091DFC_jp

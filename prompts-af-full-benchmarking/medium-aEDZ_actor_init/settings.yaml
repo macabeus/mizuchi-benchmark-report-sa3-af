@@ -1,0 +1,17 @@
+functionName: aEDZ_actor_init
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/af/build/src/overlays/actors/ovl_Ev_Dozaemon/ac_ev_dozaemon.o
+asm: |
+  glabel aEDZ_actor_init
+  nonmatching aEDZ_actor_init, 0x2C
+      /* 9583F0 80A98180 27BDFFE8 */  addiu       $sp, $sp, -0x18
+      /* 9583F4 80A98184 AFBF0014 */  sw          $ra, 0x14($sp)
+      /* 9583F8 80A98188 3C0E8013 */  lui         $t6, %hi(common_data + 0x1004C)
+      /* 9583FC 80A9818C 8DCE6EEC */  lw          $t6, %lo(common_data + 0x1004C)($t6)
+      /* 958400 80A98190 8DD900CC */  lw          $t9, 0xCC($t6)
+      /* 958404 80A98194 0320F809 */  jalr        $t9
+      /* 958408 80A98198 00000000 */   nop
+      /* 95840C 80A9819C 8FBF0014 */  lw          $ra, 0x14($sp)
+      /* 958410 80A981A0 27BD0018 */  addiu       $sp, $sp, 0x18
+      /* 958414 80A981A4 03E00008 */  jr          $ra
+      /* 958418 80A981A8 00000000 */   nop
+  endlabel aEDZ_actor_init

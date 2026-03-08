@@ -1,0 +1,33 @@
+functionName: sub_8068778
+targetObjectPath: /Users/macabeus/ApenasMeu/decompiler/sa3/build/gba/sa3/asm/code.o
+asm: |
+  	thumb_func_start sub_8068778
+  sub_8068778: @ 0x08068778
+  	push {r4, r5, lr}
+  	adds r4, r0, #0
+  	adds r5, r4, #0
+  	adds r5, #0x3c
+  	movs r1, #0x2c
+  	bl sub_80689DC
+  	cmp r0, #0
+  	beq _080687A4
+  	ldr r0, [r4, #0xc]
+  	ldr r1, _080687AC @ =0xFFFFF800
+  	adds r0, r0, r1
+  	str r0, [r4, #0xc]
+  	ldr r0, [r5, #8]
+  	movs r1, #0x80
+  	lsls r1, r1, #3
+  	ands r0, r1
+  	cmp r0, #0
+  	beq _080687A4
+  	ldrb r0, [r5, #0x1a]
+  	adds r0, #1
+  	strb r0, [r5, #0x1a]
+  _080687A4:
+  	movs r0, #0
+  	pop {r4, r5}
+  	pop {r1}
+  	bx r1
+  	.align 2, 0
+  _080687AC: .4byte 0xFFFFF800
