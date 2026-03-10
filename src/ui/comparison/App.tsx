@@ -10,11 +10,22 @@ import { PermuterContribution } from './sections/PermuterContribution';
 import { PipelinePhaseBreakdown } from './sections/PipelinePhaseBreakdown';
 import { TimeoutSummary } from './sections/TimeoutSummary';
 import { TokenConsumption } from './sections/TokenConsumption';
+import { FirstTryAnalysis } from './sections/FirstTryAnalysis';
+import { MatchByAttempt } from './sections/MatchByAttempt';
 import { TierPredictability } from './sections/TierPredictability';
 import { TokensPerSecond } from './sections/TokensPerSecond';
 import type { ComparisonData } from './types';
 
 const data = rawData as ComparisonData;
+
+const REPORT_BASE_URL =
+  'https://github.com/macabeus/mizuchi-benchmark-report-sa3-af/releases/download/run-reports';
+
+const SA3_REPORTS = [
+  { label: 'Run 1 (Feb 28)', file: 'sa3-run-report-2026-02-28T09-52-28.html' },
+  { label: 'Run 2 (Mar 1)', file: 'sa3-run-report-2026-03-01T00-58-02.html' },
+  { label: 'Run 3 (Mar 7)', file: 'sa3-run-report-2026-03-07T20-03-41.html' },
+];
 
 export function App() {
   const runLabels = useMemo(() => data.runs.map((r) => r.label), []);
@@ -22,6 +33,24 @@ export function App() {
   return (
     <div className="min-h-screen">
       <div className="max-w-[1600px] mx-auto px-4 py-8">
+        {/* Individual Run Report Links */}
+        <div className="mb-6 flex items-center gap-3 text-sm">
+          <span className="text-slate-500">Individual run reports:</span>
+          {SA3_REPORTS.map((r, i) => (
+            <a
+              key={i}
+              href={`${REPORT_BASE_URL}/${r.file}`}
+              className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+            >
+              {r.label}
+            </a>
+          ))}
+          <span className="text-slate-600 mx-1">|</span>
+          <a href="../" className="text-slate-400 hover:text-slate-300 underline underline-offset-2">
+            Back to index
+          </a>
+        </div>
+
         {/* Header */}
         <div className="mb-8 flex items-start justify-between">
           <div>
@@ -120,6 +149,22 @@ export function App() {
           subtitle="Are easy functions really faster and more likely to match than harder ones?"
         >
           <TierPredictability data={data} runLabels={runLabels} />
+        </Section>
+
+        {/* 11. First-Try Analysis */}
+        <Section
+          title="First-Try Match Rate"
+          subtitle="How often does Claude match a function on the very first attempt, without retries?"
+        >
+          <FirstTryAnalysis data={data} runLabels={runLabels} />
+        </Section>
+
+        {/* 12. Cumulative Match by Attempt */}
+        <Section
+          title="Cumulative Match by Attempt"
+          subtitle="What percentage of functions are matched by attempt N?"
+        >
+          <MatchByAttempt data={data} runLabels={runLabels} />
         </Section>
       </div>
     </div>

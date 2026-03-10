@@ -367,6 +367,35 @@ The tier classification is a reasonable predictor of difficulty, but with import
 
 ---
 
+## 9. First-Try Match Rate
+
+**Question: How often does Claude match a function on the very first attempt, without needing retries?**
+
+### Per-Run Results
+
+| Run | First-Try Matches | AI Functions | First-Try Rate |
+|-----|-------------------|--------------|----------------|
+| Run 1 | 14 | 30 | 47% |
+| Run 2 | 16 | 30 | 53% |
+| Run 3 | 17 | 30 | 57% |
+| **Average** | **15.7** | **30** | **52%** |
+
+SA3 has no programmatic-phase matches (m2c/permuter), so all 30 functions require Claude's AI intervention. Roughly half match on the first attempt.
+
+### Analysis
+
+**First-try rate is remarkably stable.** Despite Run 3's severe API throughput degradation, it had the highest first-try rate (57%). This makes sense: functions that match on attempt 1 do so before timeouts can affect them. The API slowdown primarily hurts multi-attempt functions.
+
+**First-try matches are dramatically cheaper.** A function that matches on the first attempt costs a fraction of one that requires retries. Failed functions that exhaust all 12 attempts cost 10-20x more than first-try successes, while producing no useful result.
+
+**The retry loop has diminishing returns.** Of the functions that don't match on attempt 1, only a subset eventually match with retries. The data from token analysis shows that if a function doesn't match by attempt 3, it almost certainly won't — only 1 out of 10 functions that reached all 12 attempts eventually matched.
+
+### Key Takeaway
+
+The pipeline's economics are dominated by the first-try rate. Improving the probability of a first-attempt match (via better prompts, better m2c starting points, or function-specific context) would have a much larger impact on cost and throughput than adding more retry attempts.
+
+---
+
 ## Conclusions
 
 1. **API throughput is the single largest external variable affecting pipeline success.** Run 3's 5x throughput degradation (11.14 vs 56.79 tok/s) turned a 73-80% success rate into 70%, with 3 of 5 flipped functions failing purely due to timeouts. Under stable API conditions, Run 3 would likely have matched or exceeded Runs 1-2.

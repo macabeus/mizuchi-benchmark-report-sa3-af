@@ -163,7 +163,36 @@ This difference aligns with the broader pattern: IDO codegen is more determinist
 
 ---
 
-## 6. Data Quality Warnings
+## 6. First-Try Match Rate
+
+**How often does Claude match a function on the very first AI attempt, excluding programmatic-phase matches?**
+
+### Per-Platform Results
+
+| Platform | First-Try Matches (total) | AI Functions (total) | First-Try Rate |
+|----------|--------------------------|---------------------|----------------|
+| SA3 | 47/90 | 90 | 52% |
+| AF | 38/90 | 75 (5 excluded per run) | 51% |
+
+### Per-Run Breakdown
+
+| Run | SA3 First-Try | SA3 AI Funcs | SA3 Rate | AF First-Try | AF AI Funcs | AF Rate |
+|-----|---------------|-------------|----------|--------------|------------|---------|
+| Run 1 | 14 | 30 | 47% | 13 | 25 | 52% |
+| Run 2 | 16 | 30 | 53% | 13 | 25 | 52% |
+| Run 3 | 17 | 30 | 57% | 12 | 25 | 48% |
+
+### Analysis
+
+**The first-try rate is remarkably consistent across platforms (~52%).** Despite different architectures, compilers, and toolchains, Claude matches roughly half of AI-solvable functions on its first attempt for both SA3 and AF. This suggests the first-try rate is a fundamental property of the current prompting strategy and model capability, not a function of the target platform.
+
+**AF's effective first-try rate is higher when including programmatic matches.** If we count the 5 programmatic-phase matches (which resolve instantly with 0 AI attempts) as "first-try", AF's effective rate becomes (12.7 + 5) / 30 = 59%, compared to SA3's 52%. This is a real advantage of the multi-strategy pipeline.
+
+**The retry loop has sharply diminishing returns.** Combined with the token analysis showing that functions rarely match after attempt 3, these numbers suggest that the pipeline's current retry budget of 12 attempts is excessive. A budget of 3-5 attempts would capture nearly all achievable matches while saving significant cost on hopeless functions.
+
+---
+
+## 7. Data Quality Warnings
 
 ### SA3 version inconsistency
 
