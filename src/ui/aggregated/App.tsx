@@ -9,6 +9,8 @@ import { LlmVariance } from './sections/LlmVariance';
 import { TimeoutPatterns } from './sections/TimeoutPatterns';
 import { TokenEfficiency } from './sections/TokenEfficiency';
 import { FailureAnalysis } from './sections/FailureAnalysis';
+import { FirstTryAnalysis } from './sections/FirstTryAnalysis';
+import { MatchByAttempt } from './sections/MatchByAttempt';
 import { FlippedFunctions } from './sections/FlippedFunctions';
 import type { AggregatedData } from './types';
 import { PROJECT_COLORS } from './types';
@@ -87,6 +89,14 @@ export function App() {
 
         <Section title="9. Functions That Flipped" subtitle="Cross-run consistency comparison">
           <FlippedFunctions data={data} />
+        </Section>
+
+        <Section title="10. First-Try Match Rate" subtitle="How often does Claude match on the very first AI attempt?">
+          <FirstTryAnalysis data={data} />
+        </Section>
+
+        <Section title="11. Cumulative Match by Attempt" subtitle="What percentage of functions are matched by attempt N?">
+          <MatchByAttempt data={data} />
         </Section>
       </div>
     </div>

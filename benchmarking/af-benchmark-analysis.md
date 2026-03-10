@@ -259,7 +259,40 @@ AF's tier system is a reliable predictor of pipeline success. Easy functions are
 
 ---
 
-## 10. Cross-Project Comparison: Animal Forest vs Super Mario Advance 3
+## 10. First-Try Match Rate
+
+**Question: How often does Claude match a function on the very first AI attempt, excluding programmatic-phase matches?**
+
+### Per-Run Results
+
+| Run | First-Try Matches | AI Functions | First-Try Rate |
+|-----|-------------------|--------------|----------------|
+| Run 1 | 13 | 25 | 52% |
+| Run 2 | 13 | 25 | 52% |
+| Run 3 | 12 | 25 | 48% |
+| **Average** | **12.7** | **25** | **51%** |
+
+AF has 5 functions per run matched during the programmatic phase (4 by m2c, 1 by permuter) with 0 AI attempts. These are excluded from the denominator, leaving 25 functions that required Claude's intervention.
+
+### Analysis
+
+**First-try rate is nearly identical to SA3 (~52% vs ~52%).** Despite the different target architecture (MIPS vs ARM), Claude matches roughly half of AI-required functions on the first attempt for both projects.
+
+**AF's first-try rate is stable across runs.** All three runs produced 12-13 first-try matches — a spread of just 1 function. This reinforces the finding that LLM stochasticity affects the path but not the destination for most functions.
+
+**The "never first-try" functions are important.** Some functions consistently require multiple attempts to match. These are typically harder functions where Claude needs compiler feedback to iteratively refine register allocation, branch structure, or instruction ordering. Understanding what makes these functions resistant to first-try matching could inform prompt improvements.
+
+### Comparison with SA3
+
+Both projects show ~52% first-try rates for AI-driven matches, but the overall pipeline economics differ significantly because AF has 5 free programmatic matches per run. The effective first-try rate including programmatic matches would be (12.7 + 5) / 30 = 59%, higher than SA3's 52%.
+
+### Key Takeaway
+
+The first-try rate is a fundamental property of the current system — roughly half of AI-solvable functions match immediately, regardless of target platform. Improving this rate would have an outsized impact on cost, since each additional retry attempt costs ~330K tokens and ~1.75 minutes.
+
+---
+
+## 11. Cross-Project Comparison: Animal Forest vs Super Mario Advance 3
 
 ### Platform Characteristics
 
