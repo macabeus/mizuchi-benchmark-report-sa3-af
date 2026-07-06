@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 dist
+dist-benchmark
+_site
 
 *.o
 *.s
