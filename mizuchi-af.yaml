@@ -14,10 +14,10 @@ global:
     fi
 
   # Maximum retry attempts per prompt (default: 25)
-  maxRetries: 12
+  maxRetries: 6
 
   # Output directory for generated files and reports (default: current directory)
-  outputDir: './af-reports'
+  outputDir: './benchmarking-fable/af'
 
   # Shell script template for compilation.
   # IDO 7.1 via asm-processor — produces ELF .o files matching the project build
@@ -44,7 +44,7 @@ global:
 
     mips-linux-gnu-objcopy --remove-section .mdebug "{{objFilePath}}"
 
-  promptsDir: './prompts-af-full-benchmarking'
+  promptsDir: './prompts-af'
 
   projectPath: '/Users/macabeus/ApenasMeu/decompiler/af'
 
@@ -66,6 +66,7 @@ plugins:
     # Timeout in milliseconds for Claude requests (default: 600000 = 10 minutes)
     timeoutMs: 600000
     debug: true
+    model: claude-fable-5
 
     # First user message sent to Claude to start the conversation
     kickoffMessage: 'Decompile the function described in the system prompt. Respond with only the C code in a ```c code block.'
@@ -152,7 +153,7 @@ plugins:
       # Prompt sent to Claude when the soft timeout fires
       prompt: 'You are running out of time. Submit your best C code now in a ```c block. Do not explain, do not use tools, just output the code.'
       # Optional: override model for the resumed query (defaults to the parent model)
-      # model: claude-haiku-4-5-20251001
+      model: claude-fable-5
       # Optional: override effort level for the resumed query
       # effort: low
 
@@ -169,3 +170,7 @@ plugins:
     flags:
       - '--show-errors'
       - '-j 8'
+
+  integrator:
+    enable: false
+    integratorModule: ''

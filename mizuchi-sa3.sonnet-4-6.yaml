@@ -8,7 +8,7 @@ global:
   getContextScript: cat "/Users/macabeus/ApenasMeu/decompiler/sa3/ctx.c"
 
   # Maximum retry attempts per prompt (default: 25)
-  maxRetries: 6
+  maxRetries: 12
 
   # Output directory for generated files and reports (default: current directory)
   outputDir: '.'
@@ -16,30 +16,21 @@ global:
   # Shell script template for compilation.
   # Template variables: {{cFilePath}}, {{objFilePath}}, {{functionName}}
   compilerScript: |
-    # Scratch .s files MUST be unique per compile. A shared relative name like
-    # "asm.s" is written in the common cwd (project root) and gets clobbered when
-    # compiles overlap — the background permuter compiles many candidates in
-    # parallel processes — producing a wrong-symbol object that objdiff reports as
-    # "Symbol not found". Derive the scratch path from the FULL {{objFilePath}},
-    # which is always unique. (dirname alone is NOT enough: the permuter puts every
-    # candidate .o in the shared system temp dir, so their dirnames collide.)
-    ASM_FILE="{{objFilePath}}.s"
-
     "/Users/macabeus/ApenasMeu/decompiler/sa3/tools/agbcc/bin/agbcc" \
-      "{{cFilePath}}" -o "$ASM_FILE" \
+      "{{cFilePath}}" -o asm.s \
       -mthumb-interwork -Wimplicit \
       -Wparentheses -Werror -O2 -g -fhex-asm
 
-    sed '/\.size/d' "$ASM_FILE" > "$ASM_FILE.stripped" && mv "$ASM_FILE.stripped" "$ASM_FILE"
+    sed '/\.size/d' asm.s > asm_stripped.s && mv asm_stripped.s asm.s
 
-    arm-none-eabi-as -mcpu=arm7tdmi -mthumb-interwork "$ASM_FILE" -o "{{objFilePath}}"
+    arm-none-eabi-as -mcpu=arm7tdmi -mthumb-interwork asm.s -o "{{objFilePath}}"
 
   # Directory containing prompt folders
   # Discovers and loads prompts from directory structure
   # Each prompt lives in its own folder with:
   #   - prompt.md: The prompt content
   #   - settings.yaml: Metadata (functionName, targetObjectPath)
-  promptsDir: './prompts-sa3'
+  promptsDir: './prompts'
 
   projectPath: '/Users/macabeus/ApenasMeu/decompiler/sa3'
 
@@ -70,7 +61,6 @@ plugins:
     # Timeout in milliseconds for Claude requests (default: 600000 = 10 minutes)
     timeoutMs: 600000
     debug: true
-    model: claude-fable-5
 
     # First user message sent to Claude to start the conversation
     kickoffMessage: 'Decompile the function described in the system prompt. Respond with only the C code in a ```c code block.'
@@ -157,7 +147,7 @@ plugins:
       # Prompt sent to Claude when the soft timeout fires
       prompt: 'You are running out of time. Submit your best C code now in a ```c block. Do not explain, do not use tools, just output the code.'
       # Optional: override model for the resumed query (defaults to the parent model)
-      model: claude-fable-5
+      # model: claude-haiku-4-5-20251001
       # Optional: override effort level for the resumed query
       # effort: low
 
@@ -176,7 +166,7 @@ plugins:
   # during the AI-powered phase.
   # Requires: scripts/setup-decomp-permuter.sh to be run first
   decomp-permuter:
-    enable: false 
+    enable: true
     # Maximum iterations per permuter run (default: 1000)
     maxIterations: 1000
     # Timeout in milliseconds per permuter run (default: 120000 = 2 minutes)
@@ -186,7 +176,3 @@ plugins:
     flags:
       - '--show-errors'
       - '-j 8'
-
-  integrator:
-    enable: false
-    integratorModule: ''
