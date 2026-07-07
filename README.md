@@ -6,4 +6,4 @@ This repository preserves a snapshot of Mizuchi at the time the benchmarking des
 
 You can see the code, along with the prompts and configurations, for each benchmark on their respective branches:
 - **Sonnet 4.6:** [Benchmark analysis](https://gambiconf.substack.com/p/can-llms-really-do-matching-decompilation) | [Code, prompts and configurations](https://github.com/macabeus/mizuchi-benchmark-reports/tree/sonnet-4-6-benchmark)
-- **Fable 5:** [Benchmark analysis]() | [Fable 5](https://github.com/macabeus/mizuchi-benchmark-reports/tree/fable-5-benchmark)
+- **Fable 5:** [Benchmark analysis]() | [Code, prompts and configurations](https://github.com/macabeus/mizuchi-benchmark-reports/tree/fable-5-benchmark)
