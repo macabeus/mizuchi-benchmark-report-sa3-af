@@ -3,12 +3,290 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mizuchi - Benchmark Results</title>
-    <script type="module" crossorigin src="/mizuchi-benchmark-report-sa3-af/assets/main-BZqWA6iv.js"></script>
-    <link rel="modulepreload" crossorigin href="/mizuchi-benchmark-report-sa3-af/assets/logo-MruDJvkf.js">
-    <link rel="stylesheet" crossorigin href="/mizuchi-benchmark-report-sa3-af/assets/logo-DQhYNQKQ.css">
+    <title>Mizuchi — Benchmark Reports</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        min-height: 100vh;
+        color: #e2e8f0;
+        font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+        background-attachment: fixed;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.5;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      .wrap {
+        max-width: 64rem;
+        margin: 0 auto;
+        padding: 4rem 1rem 3rem;
+      }
+
+      /* Hero */
+      .hero {
+        text-align: center;
+        margin-bottom: 3.5rem;
+      }
+      .logo-glow {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.25rem;
+      }
+      .logo-glow::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(59, 130, 246, 0.2);
+        filter: blur(2rem);
+        border-radius: 9999px;
+        transform: scale(1.5);
+      }
+      .logo-glow img {
+        position: relative;
+        width: 5.5rem;
+        height: 5.5rem;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+      }
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.75rem;
+      }
+      .grad-title {
+        background: linear-gradient(to right, #60a5fa, #22d3ee, #2dd4bf);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .hero p {
+        color: #94a3b8;
+        font-size: 1.05rem;
+        max-width: 40rem;
+        margin: 0 auto;
+      }
+
+      /* Cards */
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      @media (min-width: 720px) {
+        .cards {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .card {
+        display: block;
+        background: linear-gradient(to bottom right, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 1rem;
+        overflow: hidden;
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .card:hover {
+        border-color: rgba(71, 85, 105, 0.7);
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+      }
+      .accent {
+        height: 6px;
+      }
+      .accent-sonnet {
+        background: linear-gradient(to right, #06b6d4, #0891b2);
+      }
+      .accent-fable {
+        background: linear-gradient(to right, #f59e0b, #fb923c);
+      }
+      .card-body {
+        padding: 1.5rem;
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+      }
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .badge {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+      }
+      .arrow {
+        width: 1.25rem;
+        height: 1.25rem;
+        color: #64748b;
+        transition:
+          color 0.2s ease,
+          transform 0.2s ease;
+        flex-shrink: 0;
+      }
+      .card:hover .arrow {
+        color: #cbd5e1;
+        transform: translateX(2px);
+      }
+      .meta {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-bottom: 1.1rem;
+      }
+      .desc {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-bottom: 1.25rem;
+        min-height: 3.2em;
+      }
+      .card-foot {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      .pubdate {
+        color: #64748b;
+        font-size: 0.72rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .tag {
+        font-size: 0.72rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 0.4rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        color: #cbd5e1;
+      }
+      .tag-dot {
+        display: inline-block;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+        margin-right: 0.35rem;
+        vertical-align: middle;
+      }
+
+      footer {
+        margin-top: 4rem;
+        text-align: center;
+        color: #475569;
+        font-size: 0.75rem;
+      }
+      footer a {
+        color: #64748b;
+        text-decoration: underline;
+      }
+    </style>
   </head>
-  <body class="bg-gray-100 min-h-screen">
-    <div id="root"></div>
+  <body>
+    <div class="wrap">
+      <div class="hero">
+        <div class="logo-glow">
+          <img src="./logo.png" alt="Mizuchi" />
+        </div>
+        <h1><span class="grad-title">Mizuchi</span> <span style="color: #fff">Benchmark Reports</span></h1>
+        <p>
+          How well do frontier models drive an automated matching-decompilation pipeline? Each report benchmarks a model
+          across retro-game targets — measuring match rate, cost, and run-to-run consistency.
+        </p>
+      </div>
+
+      <div class="cards">
+        <!-- Fable 5 -->
+        <a class="card" href="fable-5/">
+          <div class="accent accent-fable"></div>
+          <div class="card-body">
+            <div class="card-head">
+              <div class="card-title">
+                Fable 5
+                <span class="badge">Newest</span>
+              </div>
+              <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <div class="meta">Fable 5 vs Sonnet 4.6 · head-to-head</div>
+            <div class="desc">
+              Does the newer model regress on what Sonnet could already match? A regression audit, flip-consistency
+              check, normalized cost, and attempts-to-match — pooled across both games and two platforms.
+            </div>
+            <div class="card-foot">
+              <div class="tags">
+                <span class="tag"><span class="tag-dot" style="background: #f59e0b"></span>Fable 5</span>
+                <span class="tag"><span class="tag-dot" style="background: #06b6d4"></span>Sonnet 4.6</span>
+              </div>
+              <div class="pubdate">Published 06/07/2026</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Sonnet 4.6 -->
+        <a class="card" href="sonnet-4-6/">
+          <div class="accent accent-sonnet"></div>
+          <div class="card-body">
+            <div class="card-head">
+              <div class="card-title">Sonnet 4.6</div>
+              <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+            <div class="meta">The first benchmark · 3 runs per game</div>
+            <div class="desc">
+              Match rate, cost, and run-to-run stability for Sonnet 4.6 across two targets, with a cross-platform
+              analysis of pipeline behavior on GBA/ARM/GCC vs N64/MIPS/IDO.
+            </div>
+            <div class="card-foot">
+              <div class="tags">
+                <span class="tag"><span class="tag-dot" style="background: #06b6d4"></span>Sonic Advance 3</span>
+                <span class="tag"><span class="tag-dot" style="background: #a855f7"></span>Animal Forest</span>
+              </div>
+              <div class="pubdate">Published 10/03/2026</div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <footer>
+        Generated by
+        <a href="https://github.com/macabeus/mizuchi">Mizuchi</a>
+        — plugin-based pipeline runner for matching decompilation projects
+      </footer>
+    </div>
   </body>
 </html>
